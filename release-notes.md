@@ -1,4 +1,4 @@
-# Release 2.0.0 [dev]
+# Release 2.0.0 [develop]
 - Оптимизирована работа с базой данных
 - Добавлена многопоточность (теперь бот работает в нескольких процессах каждый из который выполняет определённую функцию)
 - Изменён отчет о статусе сервера
@@ -6,6 +6,8 @@
 - Исправлен баг с не правильной работай рассылки
 - Изменена система хранения временных фото. Теперь они находятся в RAM.
 - Изменены типов релизов. Есть 3 типа: stable, unstable, develop, где stable стабильная используется основной базой клиентов git-branch: master; unstable не стабильная версия выпускается для проверкой участниками UVTP разворачивается на отдельном сервере работает от 1 до 7 дней в зависимости от объёма обновления git-branch: develop; develop версия созданная исключительно для разработчиков git-branch: develop.
+- Добавлена новая система распределения прав основанная на ролях (Роли можно просмотреть в профиле)
+- Изменена система конфигурации теперь все конфиденциальные данные и токены хранятся в переменных окружения
 
 # Release 1.4.1 [stable]
 - Обновлён интерфейс
@@ -17,68 +19,58 @@
 - Исправлено несколько багов
 - Повышена читабельность кода
 
-# Release 1.3.2 [beta]
-- Added system for checking schedule deletion
-- Added the ability to turn off notifications
-- Bugs fixed
+# Release 1.3.2 [unstable]
+- Добавлена ​​система для проверки графика удаления
+- Добавлена ​​возможность отключать уведомления
+- Исправлены ошибки
 
 # Release 1.3.1 [stable]
-- Bugs fixed
+- Исправлены ошибки
 
-# Release 1.3.0 [stable] [patch 4]
-- Fix issues #27-3
- 
-# Release 1.3.0 [stable] [patch 3]
-- Fix issues #27-2
-
-# Release 1.3.0 [stable] [patch 2]
-- Fix issues #27-1
-- Bugs fixed
-
-# Release 1.3.0 [stable] [patch 1]
-- Added check for D/Z deletion
-- Added system for recognizing false messages about D/Z infidelity
-- Fix issues #27
-- Bugs fixed
+# Release 1.3.0 [stable] [patch 1-4]
+- Добавлена ​​проверка на удаление домашнего задания
+- Добавлена ​​система для распознавания ложных сообщений о неверности домашней работы
+- исправлена проблема #27
+- Исправлены ошибки
 
 # Release 1.3.0 [stable]
-- Added a system for notifying administrators in case of incorrect D/Z.
-- Added secrets
-- Added D/Z and schedule removal system
+- Добавлена ​​система для уведомления администраторов в случае неправильной домашней работы.
+- Добавлены секреты
+- Добавлена ​​система домашнего задания и расписания
 
 # Release 1.2.2 [stable]
-- Bugs fixed \[call_schedule\]
+- Ошибки исправлены [call_schedule]
 
 # Release 1.2.1 [stable]
-- The system for calculating time before the start of the lesson has been fixed.
-- Bugs fixed
+- Система для расчета времени до начала урока была исправлена.
+- Исправлены ошибки
 
 # Release 1.2.0 [stable]
-- Added welcome_ani in loging.py
-- Bugs fixed
-- There was a transition to 'none'
+- Добавлено werveding_ani в loging.py
+- Исправлены ошибки
+- Был переход к «нет»
 
-# Release 1.2.0 [beta]
-- Added a system for calculating the end of a break or lesson.
-- Added checking for emergency situations.
-- Automatic update system removed.
+# Release 1.2.0 [unstable]
+- Добавлена ​​система для расчета конца разрыва или урока.
+- Добавлена ​​проверка на аварийные ситуации.
+- Устранена автоматическая система обновления.
 
-# Release 1.1.2 [beta] \[fix v1\]
-- Added paragraph button.
-- Fixed update system.
+# Release 1.1.2 [unstable] [patch 1]
+- Добавлена ​​кнопка абзаца.
+- Фиксированная система обновления.
 
-# Release 1.1.2 [beta]
-- Removed update_date_db command.
-- Removed authentication by phone number.
-- The status_text function has been renamed to send_status_text.
-- The send_message function has been renamed to newsletter.
-- The check_admin function has been renamed to check_for_admin.
-- Removed unnecessary send_status_text calls.
-- A bug related to the updated administration appointment and verification system has been fixed.
-- The administration verification system has been redesigned.
-- The system for displaying and updating homework has been redesigned from 758 lines of code to 112.
-- Fixed a vulnerability that allowed the user to be considered an administrator.
-- Logging system has been redesigned.
-- The backup system has been redesigned.
-- Added a feature to shut down servers.
-- Added automatic update feature.
+# Release 1.1.2 [unstable]
+- Удаленная команда UPDATE_DATE_DB.
+- Удалена аутентификация по номеру телефона.
+- Функция Status_Text была переименована в send_status_text.
+- Функция send_message была переименована в информационный бюллетень.
+- Функция check_admin была переименована в check_for_admin.
+- Удаленные ненужные вызовы send_status_text.
+- Ошибка, связанная с обновленной системой назначения и проверки администрирования, была исправлена.
+- Система проверки администрирования была перепроектирована.
+- Система отображения и обновления домашней работы была переработана от 758 строк кода до 112.
+- Исправлена ​​уязвимость, которая позволила пользователю считаться администратором.
+- Система регистрации была переработана.
+- Система резервного копирования была переработана.
+- Добавлена ​​функция для выключения серверов.
+- Добавлена ​​функция автоматического обновления.

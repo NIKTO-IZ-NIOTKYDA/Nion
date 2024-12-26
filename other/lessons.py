@@ -1,5 +1,5 @@
-import log.colors as colors
-import log.logging as logging
+import other.log.colors as colors
+import other.log.logging as logging
 
 class Lessons:
     log: logging.logging = None

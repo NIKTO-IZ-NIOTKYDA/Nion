@@ -1,7 +1,7 @@
 from aiogram.types import InlineKeyboardMarkup, InlineKeyboardButton
 
-import log.colors as colors
-import log.logging as logging
+import other.log.colors as colors
+import other.log.logging as logging
 from handlers.core import GetLessons
 from keyboards.other import GenLesson, __BACK_IN_MAIN_MENU__
 

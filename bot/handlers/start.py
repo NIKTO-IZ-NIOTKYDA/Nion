@@ -1,9 +1,9 @@
 from aiogram.types import Message
 from aiogram.filters import Command
 
-from config import config
-import database.requests as rq
 from utils import CheckAuthUser
+from other.config import config
+from requests.users import SetUser
 from keyboards.users import GenStart
 from handlers.core import log, GetRouter
 
@@ -16,12 +16,13 @@ async def start(message: Message) -> None:
     log.info(str(message.chat.id), 'Received \'/start\'')
 
     if not await CheckAuthUser(message, message.bot):
-        await rq.SetUser(
+        await SetUser(
                 message.from_user.id,
                 message.from_user.username,
                 message.from_user.first_name,
                 message.from_user.last_name,
-                message.from_user.language_code
+                True,
+                [config.ID_ROLE_DEFAULT]
             )
 
-    await message.answer(f'Добро пожаловать !\n\nVersion: {config.GetRELEASE}', reply_markup=await GenStart(message.chat.id))
+    await message.answer(f'Добро пожаловать !\n\nVersion: {config.RELEASE}', reply_markup=await GenStart(message.chat.id))

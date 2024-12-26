@@ -1,8 +1,8 @@
 from aiogram import Router
 
-from lessons import Lessons
-import log.logging as logging
-import log.colors as colors
+from other.lessons import Lessons
+import other.log.colors as colors
+import other.log.logging as logging
 
 lessons: Lessons = Lessons()
 router = Router(name=__name__)

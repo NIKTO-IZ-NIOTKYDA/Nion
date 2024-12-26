@@ -10,19 +10,22 @@ from sqlalchemy import (
     Boolean,
     JSON,
     LargeBinary,
-    func
+    func,
+    Table,
+    Column,
+    ForeignKey
 )
 
-from config import config
+from other.config import config
 
-import log.colors as colors
-import log.logging as logging
+import other.log.colors as colors
+import other.log.logging as logging
 
 
 log = logging.logging(Name='DB', Color=colors.yellow)
 
 engine = create_async_engine(url=config.POSTGRES_URL)
-async_session = async_sessionmaker(autoflush=False, bind=engine)
+async_session = async_sessionmaker(autocommit=False, autoflush=False, bind=engine)
 
 
 class Base(AsyncAttrs, DeclarativeBase):
@@ -33,6 +36,14 @@ class Base(AsyncAttrs, DeclarativeBase):
     updated_at: Mapped[datetime] = mapped_column(server_default=func.now(), onupdate=func.now())
 
 
+user_role = Table(
+    'user_role',
+    Base.metadata,
+    Column('user_id', Integer, ForeignKey('Users.id'), primary_key=True),
+    Column('role_id', Integer, ForeignKey('Roles.id'), primary_key=True)
+)
+
+
 class User(Base):
     __tablename__ = 'Users'
 
@@ -41,30 +52,25 @@ class User(Base):
     first_name: Mapped[str | None] = mapped_column(String(1024), nullable=True)
     last_name: Mapped[str | None] = mapped_column(String(1024), nullable=True)
     send_notifications: Mapped[bool] = mapped_column(Boolean(create_constraint=True))
-
-
-class Admin(Base):
-    __tablename__ = 'Admins'
-
-    user_id: Mapped[BigInteger] = mapped_column(BigInteger, unique=True)
     roles: Mapped[list['Role']] = relationship(
         'Role',
-        back_populates='admin',
-        lazy='dynamic',
-        foreign_keys='Roles.id'
+        secondary=user_role,
+        back_populates='users',
+        lazy='joined'
     )
 
 
 class Role(Base):
     __tablename__ = 'Roles'
 
+    role_id: Mapped[int] = mapped_column(Integer, unique=True)
     name: Mapped[str] = mapped_column(String(256))
     permissions: Mapped[dict] = mapped_column(JSON)
-    admins: Mapped[list['Admin']] = relationship(
-        'Admin',
+    users: Mapped[list['User']] = relationship(
+        'User',
+        secondary=user_role,
         back_populates='roles',
-        lazy='dynamic',
-        foreign_keys='Admins.id'
+        lazy='joined'
     )
 
 
@@ -81,7 +87,7 @@ class Schedule(Base):
     __tablename__ = 'Schedule'
 
     id: Mapped[int] = mapped_column(Integer, primary_key=True)
-    photo: Mapped[bool | None] = mapped_column(LargeBinary(8_000_000), nullable=True)
+    file: Mapped[bytes | None] = mapped_column(LargeBinary(8_000_000), nullable=True)
 
 
 async def init_db():

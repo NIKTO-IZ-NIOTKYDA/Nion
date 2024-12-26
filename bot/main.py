@@ -8,10 +8,10 @@ from aiogram.fsm.storage.memory import MemoryStorage
 from aiogram.client.default import DefaultBotProperties
 
 
-from config import config
+from other.config import config
 
-import log.colors as colors
-from log.logging import logging
+import other.log.colors as colors
+from other.log.logging import logging
 
 import handlers.core as core
 
@@ -22,9 +22,6 @@ import handlers.profile
 import handlers.schedule
 import handlers.admin_panel
 import handlers.update_lesson
-
-import database.requests as rq
-import database.models as db_models
 
 from keyboards.other import __BACK_IN_MAIN_MENU__
 

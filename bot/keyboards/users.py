@@ -1,10 +1,8 @@
-from aiogram.types import InlineKeyboardMarkup, InlineKeyboardButton, WebAppInfo
+from aiogram.types import InlineKeyboardMarkup, InlineKeyboardButton
 
-import database.requests as rq
 from utils import CheckForAdmin
-import log.colors as colors
-import log.logging as logging
-from config import config
+import other.log.colors as colors
+import other.log.logging as logging
 from handlers.core import GetLessons
 from keyboards.admins import __DELETE_SCHEDULE_WARN__
 from keyboards.other import GenLesson, GenButtonBack, __BACK_IN_MAIN_MENU__
@@ -28,9 +26,6 @@ async def GenStart(user_id: int) -> InlineKeyboardMarkup:
         [InlineKeyboardButton(text='Расписание 📑', callback_data='schedule')],
         [InlineKeyboardButton(text='Расписание звонков 🕝', callback_data='schedule:recess')],
     ]
-
-    if await rq.GetNetSchool(user_id=user_id, decode=False) != None:
-        buttons.append([InlineKeyboardButton(text='СГО 💀', web_app=WebAppInfo(url=config.WEBAPP_URL))])
 
     if await CheckForAdmin(user_id):
         buttons.append([InlineKeyboardButton(text='Админ-панель‼️', callback_data='admin_panel')])
@@ -74,13 +69,11 @@ async def GenSchedule(user_id: int) -> InlineKeyboardMarkup:
     return InlineKeyboardMarkup(row_width=1, inline_keyboard=buttons)
 
 
-async def GenProfile(isSendNotifications: bool, isNetSchool: bool) -> InlineKeyboardMarkup:
+async def GenProfile(isSendNotifications: bool) -> InlineKeyboardMarkup:
     buttons: list[list[InlineKeyboardButton]] = []
 
     if isSendNotifications: buttons.append([InlineKeyboardButton(text='Отключить уведомления', callback_data='profile:notifications:off_warn')])
     else: buttons.append([InlineKeyboardButton(text='Включить уведомления', callback_data='profile:notifications:on')])
-
-    if not isNetSchool: buttons.append([InlineKeyboardButton(text='Включить интеграцию с СГО', callback_data='profile:netschool:on')])
 
     buttons.append([__BACK_IN_MAIN_MENU__])
 

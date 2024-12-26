@@ -1,0 +1,33 @@
+{
+    "permissions": {
+        
+        "lessons": {
+            "use": true,
+            "edit": {
+                "homework": false,
+                "photo": false,
+                "url": false
+            }
+        },
+
+        "schedule": {
+            "use": true,
+            "edit": false
+        },
+
+        "schedule_call": {
+            "use": true,
+            "edit": false
+        },
+
+        "admin_panel": {
+            "use": {
+                "server_status": false,
+                "newsletter": false,
+                "role": false
+            }
+        },
+
+        "admin": false
+    }
+}

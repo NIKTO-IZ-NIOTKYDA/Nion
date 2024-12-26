@@ -1,7 +1,7 @@
 from aiogram import F
 from aiogram.types import CallbackQuery, InlineKeyboardMarkup
 
-import database.requests as rq
+import requests.users as rq_users
 from handlers.core import log, GetRouter
 from utils import CheckForAdmin, CheckAuthUser
 from keyboards.other import GenButtonBack, __BACK_IN_MAIN_MENU__
@@ -17,20 +17,19 @@ async def profile(callback: CallbackQuery):
 
     await CheckAuthUser(callback.message, callback.message.bot)
 
-    user = await rq.GetUser(callback.message.chat.id, callback.message.chat.id)
-    net_school = await rq.GetNetSchool(callback.message.chat.id, False)
+    user = await rq_users.GetUser(callback.message.chat.id)
+    roles: str = ''
 
-    if user.send_notifications: notifications_status = '✅'
+    if user['send_notifications']: notifications_status = '✅'
     else: notifications_status = '❌'
-
-    if net_school: net_school_status = '✅'
-    else: net_school_status = '❌'
 
     if await CheckForAdmin(callback.message.chat.id): isAdmin = '✅'
     else: isAdmin = '❌'
 
-    await callback.message.edit_text(f'Ваш никнейм: {user.first_name}\nВаше имя: @{user.username}\nTELEGRAM-ID: {user.user_id}\n\nУведомления: {notifications_status}\nИнтеграция с СГО: {net_school_status}\nПрава администратора: {isAdmin}',
-                                     reply_markup=await GenProfile(user.send_notifications, net_school))
+    for role in user['roles']: roles += f'- {role['name']}\n'
+
+    await callback.message.edit_text(f'Имя: {user['first_name']}\nНикнейм : @{user['username']}\nTELEGRAM-ID: <code>{user['user_id']}</code>\n\nУведомления: {notifications_status}\nПрава администратора: {isAdmin}\n\nРоли:\n{roles}',
+                                     reply_markup=await GenProfile(user['send_notifications']))
 
 
 @router.callback_query(F.data == 'profile:notifications:off_warn')
@@ -48,7 +47,16 @@ async def profile_notifications_off(callback: CallbackQuery):
 
     await CheckAuthUser(callback.message, callback.message.bot)
 
-    await rq.SetSendNotifications(callback.message.chat.id, False)
+    user = await rq_users.GetUser(callback.message.chat.id)
+    await rq_users.UpdateUser(
+        callback.message.chat.id,
+        callback.from_user.username,
+        callback.from_user.first_name,
+        callback.from_user.last_name,
+        False,
+        [role['role_id'] for role in user['roles']]
+    )
+
     await callback.message.edit_text('✅ Успешно! Вы больше не будете получать уведомления.',
                                      reply_markup=InlineKeyboardMarkup(inline_keyboard=[[GenButtonBack('profile')], [__BACK_IN_MAIN_MENU__]]))
 
@@ -59,6 +67,15 @@ async def profile_notifications_on(callback: CallbackQuery):
 
     await CheckAuthUser(callback.message, callback.message.bot)
 
-    await rq.SetSendNotifications(callback.message.chat.id, True)
+    user = await rq_users.GetUser(callback.message.chat.id)
+    await rq_users.UpdateUser(
+        callback.message.chat.id,
+        callback.from_user.username,
+        callback.from_user.first_name,
+        callback.from_user.last_name,
+        True,
+        [role['role_id'] for role in user['roles']]
+    )
+
     await callback.message.edit_text('✅ Успешно! Вы будете получать уведомления.',
                                      reply_markup=InlineKeyboardMarkup(inline_keyboard=[[GenButtonBack('profile')], [__BACK_IN_MAIN_MENU__]]))
