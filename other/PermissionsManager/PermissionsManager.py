@@ -1,12 +1,12 @@
 from json import loads as json_loads
 
-from other.log.colors import yellow
+from other.log.colors import blue
 from other.log.logging import logging
 from other.PermissionsManager.models import Permissions, PermissionsSchema
 
 
 class PermissionsManager:
-    log = logging(Name='PM', Color=yellow)
+    log = logging(Name='PM', Color=blue)
 
     DefaultConfigPermissions: dict = None
 
@@ -36,7 +36,7 @@ class PermissionsManager:
 
     def JSONToClass(self, user_id: int | None, p: dict) -> Permissions:
         try:
-            self.log.info(user_id, f'Convert JSON in Permissions is started')
+            self.log.debug(user_id, f'Convert JSON in Permissions is started')
 
             data = {
                 'lessons': p['permissions']['lessons'],
@@ -48,7 +48,7 @@ class PermissionsManager:
             permissions_schema = PermissionsSchema()
             permissions_obj = permissions_schema.load(data)
 
-            self.log.info(user_id, 'Convert JSON in Permissions is completed')
+            self.log.debug(user_id, 'Convert JSON in Permissions is completed')
             return permissions_obj
 
         except Exception as Error:
@@ -58,12 +58,12 @@ class PermissionsManager:
 
     def ClassToJSON(self, user_id: int | None, permissions: Permissions) -> dict | Exception:
         try:
-            self.log.info(user_id, 'Convert Permissions in JSON is started')
+            self.log.debug(user_id, 'Convert Permissions in JSON is started')
 
             permissions_schema = PermissionsSchema()
             json = permissions_schema.dump(permissions)
 
-            self.log.info(user_id, f'Convert Permissions in JSON is completed')
+            self.log.debug(user_id, f'Convert Permissions in JSON is completed')
             return { 'permissions': json }
 
         except Exception as Error:
@@ -99,8 +99,7 @@ class PermissionsManager:
 
                 return merged
 
-            merged_dict = merge_dicts(dict_1, dict_2)
-            return self.JSONToClass(user_id, merged_dict)
+            return self.JSONToClass(user_id, merge_dicts(dict_1, dict_2))
         except Exception as Error:
             self.log.error(user_id, f'{Error}')
             return Error

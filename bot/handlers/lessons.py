@@ -61,11 +61,7 @@ async def lesson_show(callback: CallbackQuery, state: FSMContext):
 async def lesson_nftadmins_comment(callback: CallbackQuery, state: FSMContext):
     log.info(str(callback.message.chat.id), f'Received \'[{callback.data}]\'')
 
-    if not (await utils.GetPermissions(callback.message.chat.id)).lessons.use: 
-        try: await utils.RQReporter(c=callback)
-        except utils.AccessDeniedError: return
-
-    if await utils.CheckForAdmin(callback.message.chat.id): 
+    if (await utils.GetPermissions(callback.message.chat.id)).lessons.edit.homework: 
         try: await utils.RQReporter(c=callback)
         except utils.AccessDeniedError: return
 
@@ -92,7 +88,9 @@ async def lesson_nftadmins_comment(callback: CallbackQuery, state: FSMContext):
 async def lesson_nftadmins(message: Message, state: FSMContext):
     log.info(str(message.chat.id), f'Received \'{message.text}\'')
 
-    if not (await utils.GetPermissions(message.chat.id)).lessons.use: await utils.RQReporter(m=message)
+    if (await utils.GetPermissions(message.chat.id)).lessons.edit.homework:
+        try: await utils.RQReporter(m=message)
+        except utils.AccessDeniedError: return
 
     user = await rq_users.GetUser(message.chat.id)
 

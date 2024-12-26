@@ -60,8 +60,6 @@ async def schedule_add_from_photo(message: Message, state: FSMContext) -> None:
             })
 
     else:
-        await message.answer('⚠ Обработка запроса . . .', reply_markup=InlineKeyboardMarkup(inline_keyboard=[[__BACK_IN_MAIN_MENU__]]))
-
         await rq_schedule.UpdateSchedule(message.chat.id, downloaded_file.read())
 
         await message.answer('⚠ Активирована система уведомлений . . .', reply_markup=InlineKeyboardMarkup(inline_keyboard=[[__BACK_IN_MAIN_MENU__]]))
@@ -97,8 +95,6 @@ async def schedule_add_from_file(message: Message, state: FSMContext) -> None:
         
         downloaded_file.close()
     else:
-        await message.answer('⚠ Обработка запроса . . .', reply_markup=InlineKeyboardMarkup(inline_keyboard=[[__BACK_IN_MAIN_MENU__]]))
-
         await rq_schedule.UpdateSchedule(message.chat.id, downloaded_file.read())
 
         await message.answer('⚠ Активирована система уведомлений . . .', reply_markup=InlineKeyboardMarkup(inline_keyboard=[[__BACK_IN_MAIN_MENU__]]))
@@ -147,10 +143,6 @@ async def schedule_nftadmins(callback: CallbackQuery) -> None:
         try: await utils.RQReporter(c=callback)
         except utils.AccessDeniedError: return
 
-    if await utils.CheckForAdmin(callback.message.chat.id): 
-        try: await utils.RQReporter(c=callback)
-        except utils.AccessDeniedError: return
-
     await utils.NotificationAdmins(
         f'⚠️ Пользователь: @{callback.from_user.username} [{callback.message.chat.id}] уведомил вас в неактуальности расписания',
         callback.message.bot,
@@ -169,10 +161,7 @@ async def schedule_delete_warn(callback: CallbackQuery) -> None:
         try: await utils.RQReporter(c=callback)
         except utils.AccessDeniedError: return
 
-    if await utils.CheckForAdmin(callback.message.chat.id): await callback.message.answer(text='⚠ Вы уверены ?', reply_markup=__DELETE_SCHEDULE__)
-    else: 
-        try: await utils.RQReporter(c=callback)
-        except utils.AccessDeniedError: return
+    await callback.message.answer(text='⚠ Вы уверены ?', reply_markup=__DELETE_SCHEDULE__)
 
 
 @router.callback_query(F.data.startswith('schedule:delete'))
@@ -183,9 +172,6 @@ async def schedule_delete(callback: CallbackQuery) -> None:
         try: await utils.RQReporter(c=callback)
         except utils.AccessDeniedError: return
 
-    if not await utils.CheckForAdmin(callback.message.chat.id): 
-        try: await utils.RQReporter(c=callback)
-        except utils.AccessDeniedError: return
 
     if (await rq_schedule.GetSchedule(callback.message.chat.id)) == FileNotFoundError:
         await callback.answer(text='Ошибка: файл не найден.', show_alert=True)

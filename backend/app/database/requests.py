@@ -138,12 +138,7 @@ async def SetRole(user_id: int, role_id: int, user_ids: list[int], name: str, pe
             users: list[User] = []
 
             for user_id_ in user_ids:
-                user = await GetUser(user_id, user_id_)
-
-                if user == AttributeError:
-                    return ArithmeticError
-                else:
-                    users.append(user)
+                users.append(await GetUser(user_id, user_id_))
             
             session.add(instance=Role(
                 role_id=role_id,
@@ -222,6 +217,7 @@ async def GetRole(user_id: int, role_id: int) -> Role | AttributeError | Excepti
     async with async_session() as session:
         try:
             role = await session.scalar(select(Role).where(Role.role_id == role_id))
+
             if role == None:
                 log.warn(user_id, f'Role \'{role_id}\' not found!')
                 return AttributeError
@@ -265,8 +261,7 @@ async def GetLessons(user_id: int) -> list[Lesson] | AttributeError | Exception:
     log.info(user_id, f'Getting Lessons')
 
     async with async_session() as session:
-        try:
-            return (await session.scalars(select(Lesson))).all()
+        try: return (await session.scalars(select(Lesson))).all()
 
         except AttributeError as Error:
                 log.error(user_id, str(Error))

@@ -76,18 +76,6 @@ async def SendUpdateLesson(user_id: int, lesson_id: str, bot: aiogram.Bot) -> No
     return
 
 
-async def CheckForAdmin(user_id: int) -> bool:
-    admins = await rq_users.GetAdmins(user_id)
-
-    for admin in admins['admins']:
-        if user_id == admin['user_id']:
-            log.debug(user_id, 'Admin check: success')
-            return True
-
-    log.debug(user_id, 'Admin check: fail')
-    return False
-
-
 async def CheckAuthUser(message: Message, bot: aiogram.Bot) -> bool:
     for user_id in auth_users:
         if user_id == message.chat.id:
@@ -147,8 +135,8 @@ async def GetPermissions(user_id: int) -> Permissions | Exception:
 async def RQReporter(c: CallbackQuery = None, m: Message = None) -> AccessDeniedError:
     if c != None:
         await c.answer(f'❌ Запрос не удался!\n\nLOG:\ncallback.data: \'{c.data}\'', show_alert=True)
-        return AccessDeniedError
+        raise AccessDeniedError
 
     if m != None:
         await m.answer('❌ Запрос не удался!', reply_markup=InlineKeyboardMarkup(inline_keyboard=[[__BACK_IN_MAIN_MENU__]]))
-        return AccessDeniedError
+        raise AccessDeniedError

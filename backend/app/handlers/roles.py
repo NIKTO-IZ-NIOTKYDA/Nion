@@ -144,7 +144,7 @@ async def UpdateRole(body: EditRoleBody, request: Request):
         })
 
 
-@router.post('/DeleteRole', summary='Delete role')
+@router.delete('/DeleteRole', summary='Delete role')
 async def DeleteRole(RoleID: int, body: Core, request: Request):
     if (await utils.CheckUserID(body.UserID, body.UserID)) != None: return await utils.CheckUserID(body.UserID, body.UserID)
     if (await utils.GetPermissions(body.UserID)).admin_panel.use.role == False: return await utils.Error403(request, body.UserID)

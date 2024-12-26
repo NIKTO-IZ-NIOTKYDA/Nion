@@ -3,12 +3,11 @@ from aiogram.fsm.context import FSMContext
 from aiogram.types import CallbackQuery, Message, InlineKeyboardMarkup
 
 import utils
-import requests.users as rq_users
 import requests.lessons as rq_lessons
 from handlers.core import log, GetRouter
 from keyboards.other import __BACK_IN_MAIN_MENU__
 from handlers.states.update_lesson import FormUpdate
-from keyboards.admins import __UPDATE_MENU__, __UPDATE_HOMEWORK__, __UPDATE_URL__
+from keyboards.admins import GenUpdateMenu, __UPDATE_HOMEWORK__, __UPDATE_URL__
 
 
 router = GetRouter()
@@ -18,9 +17,14 @@ router = GetRouter()
 async def update_select_category(message: Message, state: FSMContext) -> None:
     log.info(str(message.chat.id), f'Received \'{message.text}\'')
 
-    if not (await utils.GetPermissions(message.chat.id)).lessons.edit.homework: await utils.RQReporter(m=message)
+    if (
+        not (await utils.GetPermissions(message.chat.id)).lessons.edit.homework and
+        not (await utils.GetPermissions(message.chat.id)).lessons.edit.url
+        ):
+        try: await utils.RQReporter(m=message)
+        except utils.AccessDeniedError: return
 
-    await message.answer('Где нужно поставить этот текст ?', reply_markup=__UPDATE_MENU__)
+    await message.answer('Где нужно поставить этот текст ?', reply_markup=await GenUpdateMenu(message.chat.id))
     
     await state.set_state(FormUpdate.select_category)
     await state.set_data({'text': message.text})
@@ -29,14 +33,18 @@ async def update_select_category(message: Message, state: FSMContext) -> None:
 @router.callback_query(F.data, FormUpdate.select_category)
 async def update_select_lesson(callback: CallbackQuery, state: FSMContext) -> None:
     log.info(str(callback.message.chat.id), f'Received \'[{callback.data}]\'')
-
-    if not (await utils.GetPermissions(callback.message.chat.id)).lessons.edit.homework: 
-        try: await utils.RQReporter(c=callback)
-        except utils.AccessDeniedError: return
     
     if callback.data == 'update:homework':
+        if not (await utils.GetPermissions(callback.message.chat.id)).lessons.edit.homework: 
+            try: await utils.RQReporter(c=callback)
+            except utils.AccessDeniedError: return
+
         await callback.message.edit_text('👇 Выберете предмет по которому хотите заменить Д/З', reply_markup=__UPDATE_HOMEWORK__)
     elif callback.data == 'update:url':
+        if not (await utils.GetPermissions(callback.message.chat.id)).lessons.edit.url: 
+            try: await utils.RQReporter(c=callback)
+            except utils.AccessDeniedError: return
+
         await callback.message.edit_text('👇 Выберете предмет по которому хотите заменить ГДЗ', reply_markup=__UPDATE_URL__)
 
     await state.set_state(FormUpdate.select_lesson)
