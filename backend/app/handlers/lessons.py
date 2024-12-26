@@ -4,8 +4,8 @@ from fastapi import APIRouter, Request, status
 import utils
 import database.requests as rq
 from database.models import Lesson
-from handlers.bodys.core import Core
-from handlers.bodys.edit_lessons import Body as EditLessonsBody
+from handlers.bodies.core import Core
+from handlers.bodies.edit_lessons import Body as EditLessonsBody
 
 
 router = APIRouter(tags=['Lessons'])

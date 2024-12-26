@@ -1,4 +1,4 @@
-from handlers.bodys.core import Core
+from handlers.bodies.core import Core
 
 class Body(Core):
     username: str

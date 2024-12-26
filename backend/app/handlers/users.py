@@ -1,10 +1,10 @@
+from fastapi import APIRouter, status
 from fastapi.responses import JSONResponse
-from fastapi import APIRouter, Request, status
 
 import utils
 import database.requests as rq
-from handlers.bodys.core import Core
-from handlers.bodys.edit_user import Body as EditUserBody
+from handlers.bodies.core import Core
+from handlers.bodies.edit_user import Body as EditUserBody
 
 
 router = APIRouter(tags=['Users'])

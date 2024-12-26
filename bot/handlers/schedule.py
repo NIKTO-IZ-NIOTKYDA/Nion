@@ -60,6 +60,8 @@ async def schedule_add_from_photo(message: Message, state: FSMContext) -> None:
             })
 
     else:
+        await message.answer('⚠ Обработка запроса . . .', reply_markup=InlineKeyboardMarkup(inline_keyboard=[[__BACK_IN_MAIN_MENU__]]))
+
         await rq_schedule.UpdateSchedule(message.chat.id, downloaded_file.read())
 
         await message.answer('⚠ Активирована система уведомлений . . .', reply_markup=InlineKeyboardMarkup(inline_keyboard=[[__BACK_IN_MAIN_MENU__]]))
@@ -95,6 +97,8 @@ async def schedule_add_from_file(message: Message, state: FSMContext) -> None:
         
         downloaded_file.close()
     else:
+        await message.answer('⚠ Обработка запроса . . .', reply_markup=InlineKeyboardMarkup(inline_keyboard=[[__BACK_IN_MAIN_MENU__]]))
+
         await rq_schedule.UpdateSchedule(message.chat.id, downloaded_file.read())
 
         await message.answer('⚠ Активирована система уведомлений . . .', reply_markup=InlineKeyboardMarkup(inline_keyboard=[[__BACK_IN_MAIN_MENU__]]))

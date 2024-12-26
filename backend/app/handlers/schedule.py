@@ -4,8 +4,8 @@ from fastapi import APIRouter, Request, status
 import utils
 import database.requests as rq
 from other.config import config
-from handlers.bodys.core import Core
-from handlers.bodys.edit_schedule import Body as EditScheduleBody
+from handlers.bodies.core import Core
+from handlers.bodies.edit_schedule import Body as EditScheduleBody
 
 
 router = APIRouter(tags=['Schedule'])

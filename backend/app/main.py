@@ -6,14 +6,15 @@ from fastapi import FastAPI, APIRouter
 from fastapi.middleware.cors import CORSMiddleware
 
 import logging
-from other.lessons import Lessons
 import database.requests as rq
 from other.config import config
+from other.lessons import Lessons
 import database.models as db_models
 
+from handlers.roles import router as roles_router
+from handlers.users import router as users_router
 from handlers.lessons import router as lessons_router
 from handlers.schedule import router as schedule_router
-from handlers.users import router as users_router
 
 
 logging.basicConfig(level=logging.INFO)
@@ -38,9 +39,10 @@ async def start() -> None:
     )
 
     api_router = APIRouter()
+    api_router.include_router(roles_router)
+    api_router.include_router(users_router)
     api_router.include_router(lessons_router)
     api_router.include_router(schedule_router)
-    api_router.include_router(users_router)
 
     app.include_router(api_router)
 

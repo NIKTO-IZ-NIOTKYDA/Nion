@@ -4,9 +4,8 @@ from sqlalchemy.exc import IntegrityError
 from sqlalchemy.ext.asyncio.session import AsyncSession
 
 from other.config import config
-from database.models import async_session
-from database.models import User, Lesson
-from database.models import Role, Schedule, log
+from database.models import async_session, log
+from database.models import User, Role, user_role, Lesson, Schedule
 from other.PermissionsManager.models import Permissions
 from other.PermissionsManager.PermissionsManager import PM
 
@@ -239,7 +238,7 @@ async def GetRoles(user_id: int) -> list[Role] | Exception:
 
     async with async_session() as session:
         try:
-            return (await session.scalars(select(Role))).all()
+            return (await session.scalars(select(Role))).unique().all()
 
         except Exception as Error:
             log.error(user_id, str(Error))
@@ -433,6 +432,26 @@ async def DeleteUser(user_id: int, user: User) -> None | AttributeError | Except
     async with async_session() as session:
         try:
             await session.delete(user)
+
+            await __SaveData(user_id, session)
+            return
+
+        except AttributeError as Error:
+            log.error(user_id, str(Error))
+            return Error
+
+        except Exception as Error:
+            log.error(user_id, str(Error))
+            return Error
+
+
+async def DeleteRole(user_id: int, role: Role) -> None | AttributeError | Exception:
+    log.warn(user_id, f'Deleting Role: {role.role_id}')
+
+    async with async_session() as session:
+        try:
+            await session.execute(user_role.delete().where(user_role.c.role_id == role.id))  # DONT CHANGE !!!
+            await session.delete(role)
 
             await __SaveData(user_id, session)
             return
