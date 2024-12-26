@@ -1,4 +1,4 @@
-from fastapi.responses import JSONResponse
+from fastapi.responses import JSONResponse, Response
 from fastapi import APIRouter, Request, status
 
 import utils
@@ -24,10 +24,7 @@ async def GetSchedule(body: Core, request: Request):
             'file': list(schedule.file)
         })
     elif schedule == FileNotFoundError:
-        return JSONResponse(status_code=status.HTTP_204_NO_CONTENT, content={
-            'status': 'fail',
-            'details': 'file not found'
-        })
+        return Response(status_code=status.HTTP_204_NO_CONTENT)
     elif schedule == Exception:
         return JSONResponse(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, content={
             'status': 'fail',
