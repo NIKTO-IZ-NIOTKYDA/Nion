@@ -53,8 +53,7 @@ async def GetRoles(body: Core, request: Request):
     for role in roles:
         roles_json.append({
             'role_id': role.role_id,
-            'name': role.name,
-            'permissions': role.permissions,
+            'name': role.name
         })
     
     return JSONResponse(status_code=status.HTTP_200_OK, content={ 'roles': roles_json })

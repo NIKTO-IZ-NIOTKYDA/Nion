@@ -1,3 +1,4 @@
+import re
 from copy import copy
 from time import sleep
 
@@ -140,3 +141,7 @@ async def RQReporter(c: CallbackQuery = None, m: Message = None) -> AccessDenied
     if m != None:
         await m.answer('❌ Запрос не удался!', reply_markup=InlineKeyboardMarkup(inline_keyboard=[[__BACK_IN_MAIN_MENU__]]))
         raise AccessDeniedError
+
+
+def RemoveHTMLTags(text: str) -> str:
+    return re.sub(r'<.*?>', '', text)

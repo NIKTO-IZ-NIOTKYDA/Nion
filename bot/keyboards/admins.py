@@ -1,10 +1,12 @@
 from aiogram.types import InlineKeyboardMarkup, InlineKeyboardButton
 
 import utils
+from other.config import config
+import requests.roles as rq_roles
 import other.log.colors as colors
 import other.log.logging as logging
 from handlers.core import GetLessons
-from keyboards.other import GenLesson, __BACK_IN_MAIN_MENU__
+from keyboards.other import GenButtonBack, GenLesson, __BACK_IN_MAIN_MENU__
 
 log = logging.logging(Name='INIT', Color=colors.purple)
 
@@ -59,10 +61,13 @@ async def GenAdminPanel(user_id: int) -> InlineKeyboardMarkup:
     buttons: list[list[InlineKeyboardButton]] = []
 
     if (await utils.GetPermissions(user_id)).admin_panel.use.newsletter:
-        buttons.append([InlineKeyboardButton(text='Рассылка✉️', callback_data='admin_panel:newsletter_input')])
+        buttons.append([InlineKeyboardButton(text='Рассылка ✉️', callback_data='admin_panel:newsletter_input')])
     
     if (await utils.GetPermissions(user_id)).admin_panel.use.server_status:
         buttons.append([InlineKeyboardButton(text='Статус сервера 🛠️', callback_data='admin_panel:status_server')])
+
+    if (await utils.GetPermissions(user_id)).admin_panel.use.role:
+        buttons.append([InlineKeyboardButton(text='Управление ролями ⚙️', callback_data='admin_panel:role')])
     
     buttons.append([__BACK_IN_MAIN_MENU__])
 
@@ -76,3 +81,37 @@ __NEWSLETTER_WARN__ = InlineKeyboardMarkup(row_width=2, inline_keyboard=[
     ]
 ])
 log.init('__NEWSLETTER_WARN__' + ': OK')
+
+
+async def GenRoleMenu(user_id: int) -> InlineKeyboardMarkup:
+    buttons: list[list[InlineKeyboardButton]] = []
+
+    buttons.append([
+            InlineKeyboardButton(text='ID', callback_data='pass'),
+            InlineKeyboardButton(text='Название', callback_data='pass')
+        ])
+
+    for role in (await rq_roles.GetRoles(user_id, 10)):
+        buttons.append([
+                InlineKeyboardButton(text=f'{role['role_id']}', callback_data=f'admin_panel:role:open:{role['role_id']}'),
+                InlineKeyboardButton(text=f'{utils.RemoveHTMLTags(role['name'])}', callback_data=f'admin_panel:role:open:{role['role_id']}')
+            ])
+    
+    
+    buttons.append([InlineKeyboardButton(text='➕ Создать новую роль', callback_data=f'admin_panel:role:create')])
+    buttons.append([GenButtonBack('admin_panel')])
+    buttons.append([__BACK_IN_MAIN_MENU__])
+
+    return InlineKeyboardMarkup(row_width=1, inline_keyboard=buttons)
+
+
+async def GenRoleOpen(role_id: int) -> InlineKeyboardMarkup:
+    buttons: list[list[InlineKeyboardButton]] = []
+
+    if role_id != config.ID_ROLE_OWNER and role_id != config.ID_ROLE_DEFAULT:
+        buttons.append([InlineKeyboardButton(text='🔧 Редактировать', callback_data=f'admin_panel:role:edit:{role_id}')])
+
+    buttons.append([GenButtonBack('admin_panel:role')])
+    buttons.append([__BACK_IN_MAIN_MENU__])
+
+    return InlineKeyboardMarkup(row_width=1, inline_keyboard=buttons)

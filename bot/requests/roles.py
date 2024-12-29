@@ -45,7 +45,7 @@ async def GetRoles(user_id: int,
         ))
 
         if response.status_code == httpx.codes.OK:
-            return response.json()
+            return response.json()['roles']
 
     except httpx.HTTPStatusError as http_status_error:
         raise http_status_error
