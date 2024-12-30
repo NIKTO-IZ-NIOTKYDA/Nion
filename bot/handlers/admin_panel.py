@@ -9,6 +9,7 @@ import utils
 from other.config import config
 import requests.roles as rq_roles
 from handlers.core import log, GetRouter
+from handlers.states.role_edit import FormRoleEdit
 from handlers.states.newsletter import FormNewsletter
 from handlers.states.role_create import FormRoleCreate
 from other.PermissionsManager.PermissionsManager import PM
@@ -235,7 +236,7 @@ async def admin_panel_role_edit(callback: CallbackQuery, state: FSMContext):
 
     users = '' if role['users'] != [] else '❌'
     for user in role['users']:
-        users += f'\'{user['first_name']}\'' + ' [ @' + str(user['username'])+(' ], ' if user['user_id'] != role['users'][-1]['user_id'] else ' ]')
+        users += f'\'{user['first_name']}\'' + ' [ @' + str(user['username']) + ' ], ' if user['user_id'] != role['users'][-1]['user_id'] else ' ]'
 
     await callback.message.edit_text(
         f'‼️ Вы в редакторе роли \'{role['name']}\' [{role_id}]\n\nПользователи с этой ролью: {users}\nРазрешения:\n{utils.get_permissions(role['permissions'])}',
@@ -244,7 +245,7 @@ async def admin_panel_role_edit(callback: CallbackQuery, state: FSMContext):
 
 
 @router.callback_query(F.data.startswith('admin_panel:role:edit:') and F.data.endswith(':name'))
-async def admin_panel_role_edit(callback: CallbackQuery, state: FSMContext):
+async def admin_panel_role_edit_name(callback: CallbackQuery, state: FSMContext):
     if not (await utils.GetPermissions(callback.message.chat.id)).admin_panel.use.role: 
         try: await utils.RQReporter(c=callback)
         except utils.AccessDeniedError: return
@@ -254,4 +255,48 @@ async def admin_panel_role_edit(callback: CallbackQuery, state: FSMContext):
     if role_id == config.ID_ROLE_OWNER and role_id == config.ID_ROLE_DEFAULT:
         try: await utils.RQReporter(c=callback)
         except utils.AccessDeniedError: return
-    
+
+    await callback.message.edit_text(
+        f'➡️ Введите новое название для роли [{role_id}]',
+        reply_markup=InlineKeyboardMarkup(inline_keyboard=[
+            [GenButtonBack(f'admin_panel:role:edit:{role_id}')],
+            [__BACK_IN_MAIN_MENU__]
+        ])
+    )
+
+    await state.set_state(FormRoleEdit.input_name)
+    await state.set_data({
+        'role_id': role_id
+    })
+
+
+@router.message(F.text, FormRoleEdit.input_name)
+async def admin_panel_role_edit_name(message: Message, state: FSMContext):
+    if not (await utils.GetPermissions(message.chat.id)).admin_panel.use.role: 
+        try: await utils.RQReporter(m=message)
+        except utils.AccessDeniedError: return
+
+    if len(message.text) > 255:
+        message.answer(f'‼️ Некорректные входные данные!\n\n➡️ Введите новое имя для роли [{(await state.get_data())['role_id']}]')
+
+        state.set_state(FormRoleCreate.input_name)
+        
+        return
+
+    role_id = int((await state.get_data())['role_id'])
+    role = await rq_roles.GetRole(message.chat.id, role_id)
+
+    await rq_roles.UpdateRole(
+        message.chat.id,
+        role_id,
+        [user['user_id'] for user in role['users']],
+        str(message.text),
+        PM.JSONToClass(message.chat.id, { 'permissions': role['permissions'] })
+    )
+
+    await message.answer('✅ Роль успешно обновлена!', reply_markup=InlineKeyboardMarkup(inline_keyboard=[
+            [GenButtonBack(f'admin_panel:role:edit:{role_id}')],
+            [__BACK_IN_MAIN_MENU__]
+        ]))
+
+    await state.clear()
