@@ -1,5 +1,0 @@
-psutil
-telebot
-netschoolapi
-cryptography
-annotated-types
