@@ -3,18 +3,20 @@ from platform import system, python_version, release
 import psutil
 from aiogram import F
 from aiogram.fsm.context import FSMContext
+from aiogram.exceptions import TelegramBadRequest
 from aiogram.types import CallbackQuery, Message, InlineKeyboardMarkup, InlineKeyboardButton
 
 import utils
 from other.config import config
 import requests.roles as rq_roles
+import requests.users as rq_users
 from handlers.core import log, GetRouter
 from handlers.states.role_edit import FormRoleEdit
 from handlers.states.newsletter import FormNewsletter
 from handlers.states.role_create import FormRoleCreate
 from other.PermissionsManager.PermissionsManager import PM
 from keyboards.other import GenButtonBack, __BACK_IN_MAIN_MENU__
-from keyboards.admins import GenAdminPanel, __NEWSLETTER_WARN__, GenRoleMenu, GenRoleOpen, GenRoleEdit
+from keyboards.admins import GenAdminPanel, __NEWSLETTER_WARN__, GenRoleMenu, GenRoleOpen, GenRoleEdit, GenRoleEditUsers
 
 
 router = GetRouter()
@@ -300,3 +302,197 @@ async def admin_panel_role_edit_name(message: Message, state: FSMContext):
         ]))
 
     await state.clear()
+
+
+@router.callback_query(F.data.startswith('admin_panel:role:edit:') and F.data.endswith(':users'))
+async def admin_panel_role_edit_users(callback: CallbackQuery, state: FSMContext):
+    if not (await utils.GetPermissions(callback.message.chat.id)).admin_panel.use.role: 
+        try: await utils.RQReporter(c=callback)
+        except utils.AccessDeniedError: return
+
+    role_id = int(callback.data.split(':')[-2])
+
+    if role_id == config.ID_ROLE_OWNER and role_id == config.ID_ROLE_DEFAULT:
+        try: await utils.RQReporter(c=callback)
+        except utils.AccessDeniedError: return
+
+    role = await rq_roles.GetRole(callback.message.chat.id, role_id)
+
+    await callback.message.edit_text(
+        f'➡️ Выберите действие',
+        reply_markup=await GenRoleEditUsers(role)
+    )
+
+    await state.set_state(FormRoleEdit.edit_users)
+    await state.set_data({
+        'role_id': role_id
+    })
+
+
+@router.callback_query(F.data.endswith('delete'), FormRoleEdit.edit_users)
+async def admin_panel_role_edit_users_delete(callback: CallbackQuery, state: FSMContext):
+    if not (await utils.GetPermissions(callback.message.chat.id)).admin_panel.use.role: 
+        try: await utils.RQReporter(c=callback)
+        except utils.AccessDeniedError: return
+
+    role_id = int(callback.data.split(':')[-4])
+    user_delete_id = int(callback.data.split(':')[-2])
+
+    if role_id == config.ID_ROLE_OWNER and role_id == config.ID_ROLE_DEFAULT:
+        try: await utils.RQReporter(c=callback)
+        except utils.AccessDeniedError: return
+
+    role = await rq_roles.GetRole(callback.message.chat.id, role_id)
+    new_user_ids_list: list[int] = []
+    
+    for user in role['users']:
+        if user['user_id'] != user_delete_id:
+            new_user_ids_list.append(user['user_id'])
+    
+    await rq_roles.UpdateRole(
+        callback.message.chat.id,
+        role_id,
+        new_user_ids_list,
+        role['name'],
+        PM.JSONToClass(callback.message.chat.id, { 'permissions': role['permissions']} )
+    )
+
+    try:
+        await callback.bot.send_message(
+            user_delete_id,
+            f'⚠️ С вас снята роль \'{role['name']}\'',
+            reply_markup=InlineKeyboardMarkup(inline_keyboard=[[__BACK_IN_MAIN_MENU__]])
+        )
+    except TelegramBadRequest:
+        log.warn(str(user_delete_id), f'User {user_delete_id} has blocked the bot!')
+
+    role = await rq_roles.GetRole(callback.message.chat.id, role_id)
+
+    await callback.message.edit_text(
+        f'➡️ Выберите действие',
+        reply_markup=await GenRoleEditUsers(role)
+    )
+
+    await state.set_state(FormRoleEdit.edit_users)
+    await state.set_data({
+        'role_id': role_id
+    })
+
+
+@router.callback_query(F.data.endswith(':users:add'), FormRoleEdit.edit_users)
+async def admin_panel_role_edit_users(callback: CallbackQuery, state: FSMContext):
+    if not (await utils.GetPermissions(callback.message.chat.id)).admin_panel.use.role: 
+        try: await utils.RQReporter(c=callback)
+        except utils.AccessDeniedError: return
+
+    role_id = int(callback.data.split(':')[-3])
+
+    if role_id == config.ID_ROLE_OWNER and role_id == config.ID_ROLE_DEFAULT:
+        try: await utils.RQReporter(c=callback)
+        except utils.AccessDeniedError: return
+
+    await callback.message.edit_text(
+        f'➡️ Введите TelegramID или Username пользователя (Без \'@\')\n\n❗️ Этот пользователь должен пользоваться ботом',
+        reply_markup=InlineKeyboardMarkup(inline_keyboard=[
+            [GenButtonBack(f'admin_panel:role:edit:{role_id}:users')],
+            [__BACK_IN_MAIN_MENU__]
+        ])
+    )
+
+    await state.set_state(FormRoleEdit.input_user_id_or_username)
+    await state.set_data({
+        'role_id': role_id
+    })
+
+
+@router.message(F.text, FormRoleEdit.input_user_id_or_username)
+async def admin_panel_role_edit_users_input_user_id_or_username(message: Message, state: FSMContext):
+    if not (await utils.GetPermissions(message.chat.id)).admin_panel.use.role: 
+        try: await utils.RQReporter(m=message)
+        except utils.AccessDeniedError: return
+
+    role_id = int((await state.get_data())['role_id'])
+
+    if role_id == config.ID_ROLE_OWNER and role_id == config.ID_ROLE_DEFAULT:
+        try: await utils.RQReporter(m=message)
+        except utils.AccessDeniedError: return
+    
+    users = await rq_users.GetUsers(message.chat.id)
+    isExists = False
+    user_id = None
+    
+    for user in users:
+        if str(user['user_id']) == str(message.text) or str(user['username']) == str(message.text):
+            isExists = True
+            user_id = user['user_id']
+            
+            break
+
+    if not isExists:
+        await message.answer(
+            f'❌ Пользователь {message.text} не найден!\n\n➡️ Введите TelegramID или Username ещё раз',
+            reply_markup=InlineKeyboardMarkup(inline_keyboard=[
+                [GenButtonBack(f'admin_panel:role:edit:{role_id}:users')],
+                [__BACK_IN_MAIN_MENU__]
+            ])
+        )
+
+        return
+
+    role = await rq_roles.GetRole(message.chat.id, role_id)
+
+    user_ids: list[int] = [user['user_id'] for user in role['users']]
+    try:
+        user_ids.remove(user_id)
+
+        await message.answer(
+            f'❌ У пользователя {message.text} уже есть эта роль!',
+            reply_markup=InlineKeyboardMarkup(inline_keyboard=[
+                [GenButtonBack(f'admin_panel:role:edit:{role_id}:users')],
+                [__BACK_IN_MAIN_MENU__]
+            ])
+        )
+
+        await state.clear()
+
+        return
+    except ValueError:
+        pass
+
+    try:
+        await message.bot.send_message(
+            user_id,
+            f'⚠️ Вам добавлена роль \'{role['name']}\'',
+            reply_markup=InlineKeyboardMarkup(inline_keyboard=[[__BACK_IN_MAIN_MENU__]])
+        )
+    except TelegramBadRequest:
+        await message.answer(
+            f'❌ Пользователь {message.text} заблокировал бота!',
+            reply_markup=InlineKeyboardMarkup(inline_keyboard=[
+                [GenButtonBack(f'admin_panel:role:edit:{role_id}:users')],
+                [__BACK_IN_MAIN_MENU__]
+            ])
+        )
+        
+        await state.clear()
+
+        return
+
+    user_ids = [user['user_id'] for user in role['users']]
+    user_ids.append(user_id)
+
+    await rq_roles.UpdateRole(
+        message.chat.id,
+        role_id,
+        user_ids,
+        role['name'],
+        PM.JSONToClass(message.chat.id, { 'permissions': role['permissions'] })
+    )
+
+    await message.answer(
+        f'✅ Пользователю \'{message.text}\' добавлена роль \'{role['name']}\'',
+        reply_markup=InlineKeyboardMarkup(inline_keyboard=[
+            [GenButtonBack(f'admin_panel:role:edit:{role_id}:users')],
+            [__BACK_IN_MAIN_MENU__]
+        ])
+    )

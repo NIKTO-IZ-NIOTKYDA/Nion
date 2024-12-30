@@ -71,7 +71,7 @@ async def GetUsers(
 
         if response.status_code == httpx.codes.OK:
             response_json = response.json()
-            return response_json
+            return response_json['users']
 
         elif response.status_code == httpx.codes.NOT_FOUND:
             raise errors.ResponseError(response_json)

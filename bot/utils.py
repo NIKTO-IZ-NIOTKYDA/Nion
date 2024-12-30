@@ -47,7 +47,7 @@ async def GetTimeToLesson(lessons: list[dict[str, str]], current_time: str) -> t
 async def newsletter(user_id: int, text: str, auto: bool, bot: aiogram.Bot) -> None:
     log.warn(user_id, 'Start of the mailing')
 
-    users = (await rq_users.GetUsers(user_id))['users']
+    users = (await rq_users.GetUsers(user_id))
     timer: int = 0
 
     for user in users:

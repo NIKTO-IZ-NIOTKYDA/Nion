@@ -129,3 +129,20 @@ async def GenRoleEdit(role: dict) -> InlineKeyboardMarkup:
     buttons.append([__BACK_IN_MAIN_MENU__])
 
     return InlineKeyboardMarkup(row_width=1, inline_keyboard=buttons)
+
+
+async def GenRoleEditUsers(role: dict) -> InlineKeyboardMarkup:
+    buttons: list[list[InlineKeyboardButton]] = []
+
+    for user in role['users']:
+        buttons.append([
+            InlineKeyboardButton(text=f'{user['first_name']} [ @{user['username']} ]', callback_data='pass'),
+            InlineKeyboardButton(text='❌', callback_data=f'admin_panel:role:edit:{role['role_id']}:users:{user['user_id']}:delete')
+        ])
+
+    buttons.append([InlineKeyboardButton(text='➕ Добавить пользователя', callback_data=f'admin_panel:role:edit:{role['role_id']}:users:add')])
+
+    buttons.append([GenButtonBack(f'admin_panel:role:edit:{role['role_id']}')])
+    buttons.append([__BACK_IN_MAIN_MENU__])
+
+    return InlineKeyboardMarkup(row_width=2, inline_keyboard=buttons)
