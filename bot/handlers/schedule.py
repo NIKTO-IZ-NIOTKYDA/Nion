@@ -19,8 +19,6 @@ router = GetRouter()
 
 @router.callback_query(F.data == 'schedule')
 async def schedule(callback: CallbackQuery):
-    log.info(str(callback.message.chat.id), f'Received \'[{callback.data}]\'')
-
     if not (await utils.GetPermissions(callback.message.chat.id)).schedule.use: 
         try: await utils.RQReporter(c=callback)
         except utils.AccessDeniedError: return
@@ -103,8 +101,6 @@ async def schedule_add_from_file(message: Message, state: FSMContext) -> None:
 
 @router.callback_query(F.data.startswith('schedule:recess'))
 async def schedule_recess(callback: CallbackQuery):
-    log.info(str(callback.message.chat.id), f'Received \'[{callback.data}]\'')
-
     if not (await utils.GetPermissions(callback.message.chat.id)).schedule_call.use: 
         try: await utils.RQReporter(c=callback)
         except utils.AccessDeniedError: return
@@ -137,8 +133,6 @@ async def schedule_recess(callback: CallbackQuery):
 
 @router.callback_query(F.data.startswith('schedule:nftadmins'))
 async def schedule_nftadmins(callback: CallbackQuery) -> None:
-    log.info(str(callback.message.chat.id), f'Received \'[{callback.data}]\'')
-
     if not (await utils.GetPermissions(callback.message.chat.id)).schedule.use: 
         try: await utils.RQReporter(c=callback)
         except utils.AccessDeniedError: return
@@ -155,7 +149,6 @@ async def schedule_nftadmins(callback: CallbackQuery) -> None:
 
 @router.callback_query(F.data.startswith('schedule:delete_warn'))
 async def schedule_delete_warn(callback: CallbackQuery) -> None:
-    log.info(str(callback.message.chat.id), f'Received \'[{callback.data}]\'')
     
     if not (await utils.GetPermissions(callback.message.chat.id)).schedule.edit: 
         try: await utils.RQReporter(c=callback)
@@ -166,8 +159,6 @@ async def schedule_delete_warn(callback: CallbackQuery) -> None:
 
 @router.callback_query(F.data.startswith('schedule:delete'))
 async def schedule_delete(callback: CallbackQuery) -> None:
-    log.info(str(callback.message.chat.id), f'Received \'[{callback.data}]\'')
-
     if not (await utils.GetPermissions(callback.message.chat.id)).schedule.edit: 
         try: await utils.RQReporter(c=callback)
         except utils.AccessDeniedError: return

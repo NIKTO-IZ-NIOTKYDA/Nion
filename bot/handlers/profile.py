@@ -13,8 +13,6 @@ router = GetRouter()
 
 @router.callback_query(F.data == 'profile')
 async def profile(callback: CallbackQuery):
-    log.info(str(callback.message.chat.id), f'Received \'[{callback.data}]\'')
-
     await utils.CheckAuthUser(callback.message, callback.message.bot)
 
     user = await rq_users.GetUser(callback.message.chat.id)
@@ -34,8 +32,6 @@ async def profile(callback: CallbackQuery):
 
 @router.callback_query(F.data == 'profile:notifications:off_warn')
 async def profile_notifications_off_warn(callback: CallbackQuery):
-    log.info(str(callback.message.chat.id), f'Received \'[{callback.data}]\'')
-
     await utils.CheckAuthUser(callback.message, callback.message.bot)
 
     await callback.message.edit_text('Вы уверены ?\n\n*Если вы отключите уведомления вы не будете получать сообщения об обновлении домашнего задания и расписания. Сюда НЕ входит рассылка от администраторов бота.', reply_markup=__OFF__NOTIFICATIONS__)
@@ -43,8 +39,6 @@ async def profile_notifications_off_warn(callback: CallbackQuery):
 
 @router.callback_query(F.data == 'profile:notifications:off')
 async def profile_notifications_off(callback: CallbackQuery):
-    log.info(str(callback.message.chat.id), f'Received \'[{callback.data}]\'')
-
     await utils.CheckAuthUser(callback.message, callback.message.bot)
 
     user = await rq_users.GetUser(callback.message.chat.id)
@@ -63,8 +57,6 @@ async def profile_notifications_off(callback: CallbackQuery):
 
 @router.callback_query(F.data == 'profile:notifications:on')
 async def profile_notifications_on(callback: CallbackQuery):
-    log.info(str(callback.message.chat.id), f'Received \'[{callback.data}]\'')
-
     await utils.CheckAuthUser(callback.message, callback.message.bot)
 
     user = await rq_users.GetUser(callback.message.chat.id)

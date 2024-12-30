@@ -13,8 +13,6 @@ router = GetRouter()
 
 @router.message(Command('start'))
 async def start(message: Message) -> None:
-    log.info(str(message.chat.id), 'Received \'/start\'')
-
     if not await CheckAuthUser(message, message.bot):
         await SetUser(
                 message.from_user.id,

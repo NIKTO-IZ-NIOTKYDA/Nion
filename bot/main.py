@@ -31,9 +31,7 @@ from utils import NotificationAdmins
 async def main() -> None:
     log = logging(Name='MAIN', Color=colors.green)
 
-    bot: Bot = Bot(config.BOT_TOKEN, default=DefaultBotProperties(
-        parse_mode=ParseMode.HTML
-    ))
+    bot: Bot = Bot(config.BOT_TOKEN, default=DefaultBotProperties(parse_mode=ParseMode.HTML))
     dp: Dispatcher = Dispatcher(storage=MemoryStorage())
 
     dp.include_router(core.GetRouter())

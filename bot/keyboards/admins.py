@@ -1,4 +1,5 @@
 from aiogram.types import InlineKeyboardMarkup, InlineKeyboardButton
+from aiogram.types.switch_inline_query_chosen_chat import SwitchInlineQueryChosenChat
 
 import utils
 from other.config import config
@@ -112,6 +113,19 @@ async def GenRoleOpen(role_id: int) -> InlineKeyboardMarkup:
         buttons.append([InlineKeyboardButton(text='🔧 Редактировать', callback_data=f'admin_panel:role:edit:{role_id}')])
 
     buttons.append([GenButtonBack('admin_panel:role')])
+    buttons.append([__BACK_IN_MAIN_MENU__])
+
+    return InlineKeyboardMarkup(row_width=1, inline_keyboard=buttons)
+
+
+async def GenRoleEdit(role: dict) -> InlineKeyboardMarkup:
+    buttons: list[list[InlineKeyboardButton]] = []
+
+    buttons.append([InlineKeyboardButton(text='Редактировать название', callback_data=f'admin_panel:role:edit:{role['role_id']}:name')])
+    buttons.append([InlineKeyboardButton(text='Редактировать пользователей', callback_data=f'admin_panel:role:edit:{role['role_id']}:users')])
+    buttons.append([InlineKeyboardButton(text='Редактировать разрешения', callback_data=f'admin_panel:role:edit:{role['role_id']}:permissions')])
+
+    buttons.append([GenButtonBack(f'admin_panel:role:open:{role['role_id']}')])
     buttons.append([__BACK_IN_MAIN_MENU__])
 
     return InlineKeyboardMarkup(row_width=1, inline_keyboard=buttons)

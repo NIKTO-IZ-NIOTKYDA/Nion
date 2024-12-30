@@ -15,8 +15,6 @@ router = GetRouter()
 
 @router.message(F.text)
 async def update_select_category(message: Message, state: FSMContext) -> None:
-    log.info(str(message.chat.id), f'Received \'{message.text}\'')
-
     if (
         not (await utils.GetPermissions(message.chat.id)).lessons.edit.homework and
         not (await utils.GetPermissions(message.chat.id)).lessons.edit.url
@@ -32,7 +30,6 @@ async def update_select_category(message: Message, state: FSMContext) -> None:
 
 @router.callback_query(F.data, FormUpdate.select_category)
 async def update_select_lesson(callback: CallbackQuery, state: FSMContext) -> None:
-    log.info(str(callback.message.chat.id), f'Received \'[{callback.data}]\'')
     
     if callback.data == 'update:homework':
         if not (await utils.GetPermissions(callback.message.chat.id)).lessons.edit.homework: 
@@ -52,8 +49,6 @@ async def update_select_lesson(callback: CallbackQuery, state: FSMContext) -> No
 
 @router.callback_query(F.data != 'paragraph', FormUpdate.select_lesson)
 async def update(callback: CallbackQuery, state: FSMContext) -> None:
-    log.info(str(callback.message.chat.id), f'Received \'[{callback.data}]\'')
-
     await callback.message.edit_text('⚙️ Выполняется замена, пожалуйста, подождите . . .')
     lesson_id = callback.data.split(':')[-1]
 
@@ -113,6 +108,5 @@ async def update(callback: CallbackQuery, state: FSMContext) -> None:
 
 @router.callback_query(F.data == 'paragraph')
 async def paragraph(callback: CallbackQuery) -> None:
-    log.info(str(callback.message.chat.id), f'Received \'[{callback.data}]\'')
     
     await callback.message.edit_text('<code>§</code>\n\n#paragraph')

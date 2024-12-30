@@ -20,8 +20,6 @@ router = GetRouter()
 
 @router.callback_query(F.data == 'lessons')
 async def lessons(callback: CallbackQuery):
-    log.info(str(callback.message.chat.id), f'Received \'[{callback.data}]\'')
-
     if not (await utils.GetPermissions(callback.message.chat.id)).lessons.use: 
         try: await utils.RQReporter(c=callback)
         except utils.AccessDeniedError: return
@@ -31,8 +29,6 @@ async def lessons(callback: CallbackQuery):
 
 @router.callback_query(F.data.startswith('lesson:show:'))
 async def lesson_show(callback: CallbackQuery, state: FSMContext):
-    log.info(str(callback.message.chat.id), f'Received \'[{callback.data}]\'')
-
     await state.clear()
 
     if not (await utils.GetPermissions(callback.message.chat.id)).lessons.use: 
@@ -59,8 +55,6 @@ async def lesson_show(callback: CallbackQuery, state: FSMContext):
 
 @router.callback_query(F.data.startswith('lesson:nftadmins:'))
 async def lesson_nftadmins_comment(callback: CallbackQuery, state: FSMContext):
-    log.info(str(callback.message.chat.id), f'Received \'[{callback.data}]\'')
-
     if (await utils.GetPermissions(callback.message.chat.id)).lessons.edit.homework: 
         try: await utils.RQReporter(c=callback)
         except utils.AccessDeniedError: return
@@ -86,8 +80,6 @@ async def lesson_nftadmins_comment(callback: CallbackQuery, state: FSMContext):
 
 @router.message(F.text, FormNotificationAdmins.comment)
 async def lesson_nftadmins(message: Message, state: FSMContext):
-    log.info(str(message.chat.id), f'Received \'{message.text}\'')
-
     if (await utils.GetPermissions(message.chat.id)).lessons.edit.homework:
         try: await utils.RQReporter(m=message)
         except utils.AccessDeniedError: return
@@ -111,8 +103,6 @@ async def lesson_nftadmins(message: Message, state: FSMContext):
 
 @router.callback_query(F.data.startswith('lesson:delete_warn:'))
 async def lesson_delete_warn(callback: CallbackQuery):
-    log.info(str(callback.message.chat.id), f'Received \'[{callback.data}]\'')
-
     if not (await utils.GetPermissions(callback.message.chat.id)).lessons.edit.homework: 
         try: await utils.RQReporter(c=callback)
         except utils.AccessDeniedError: return
@@ -139,8 +129,6 @@ async def lesson_delete_warn(callback: CallbackQuery):
 
 @router.callback_query(F.data.startswith('lesson:delete:'))
 async def lesson_delete(callback: CallbackQuery):
-    log.warn(str(callback.message.chat.id), f'Received \'[{callback.data}]\'')
-
     if not (await utils.GetPermissions(callback.message.chat.id)).lessons.edit.homework: 
         try: await utils.RQReporter(c=callback)
         except utils.AccessDeniedError: return

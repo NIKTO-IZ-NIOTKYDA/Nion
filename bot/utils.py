@@ -145,3 +145,16 @@ async def RQReporter(c: CallbackQuery = None, m: Message = None) -> AccessDenied
 
 def RemoveHTMLTags(text: str) -> str:
     return re.sub(r'<.*?>', '', text)
+
+
+def get_permissions(permissions: dict) -> str:
+    msg = ''
+    
+    for key, value in permissions.items():
+        if isinstance(value, dict):
+            if 'description' in value and 'value' in value:
+                msg += f'- {value['description']}: {'✅' if value['value'] else '❌'}\n'
+            else:
+                msg += get_permissions(value)
+
+    return msg

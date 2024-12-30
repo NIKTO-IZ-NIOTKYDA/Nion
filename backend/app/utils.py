@@ -16,7 +16,7 @@ lessons = Lessons()
 
 
 async def CheckUserID(user_id_request: int, user_id_check: int):
-    log.debug(user_id_request, f'Checking {user_id_check}')
+    log.debug(user_id_request, f'Experience check \'{user_id_check}\'')
 
     if (await rq.GetUser(user_id_request, user_id_check)) == AttributeError:
         return JSONResponse(status_code=status.HTTP_404_NOT_FOUND, content={

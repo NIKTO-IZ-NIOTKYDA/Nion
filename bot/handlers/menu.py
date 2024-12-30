@@ -18,8 +18,6 @@ router = GetRouter()
 
 @router.callback_query(F.data == 'menu')
 async def menu(callback: CallbackQuery, state: FSMContext):
-    log.info(str(callback.message.chat.id), f'Received \'[{callback.data}]\'')
-
     await state.clear()
 
     if await CheckAuthUser(callback.message, callback.message.bot):
