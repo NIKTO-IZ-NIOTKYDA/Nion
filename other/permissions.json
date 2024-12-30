@@ -1,0 +1,69 @@
+{
+    "permissions": {
+        
+        "lessons": {
+            "use": {
+                    "value": true,
+                    "description": "Использовать 'Уроки'"
+                },
+            "edit": {
+                "homework": {
+                    "value": false,
+                    "description": "Изменять домашнее задание прикреплённое к уроку"
+                },
+                "photo": {
+                    "value": false,
+                    "description": "Изменять фото прикреплённое к уроку"
+                },
+                "url": {
+                    "value": false,
+                    "description": "Изменять url прикреплённое к уроку"
+                }
+            }
+        },
+
+        "schedule": {
+            "use": {
+                "value": true,
+                "description": "Использовать 'Расписание'"
+            },
+            "edit": {
+                "value": false,
+                "description": "Изменять фото расписания"
+            }
+        },
+
+        "schedule_call": {
+            "use":  {
+                "value": true,
+                "description": "Использовать 'Расписание звонков'"
+            },
+            "edit": {
+                "value": false,
+                "description": "Изменять расписание звонков"
+            }
+        },
+
+        "admin_panel": {
+            "use": {
+                "server_status": {
+                    "value": false,
+                    "description": "Использовать: 'Статус сервера' в админ панели"
+                },
+                "newsletter": {
+                    "value": false,
+                    "description": "Использовать: 'Рассылка' в админ панели"
+                },
+                "role": {
+                    "value": false,
+                    "description": "Использовать: 'Управление ролями' в админ панели"
+                }
+            }
+        },
+
+        "admin": {
+            "value": false,
+            "description": "Администратор"
+        }
+    }
+}
