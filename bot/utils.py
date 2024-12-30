@@ -28,19 +28,19 @@ class AccessDeniedError(Exception):
 async def GetTimeToLesson(lessons: list[dict[str, str]], current_time: str) -> tuple[int, float] | tuple[int, None]:
     current_hour, current_minute = map(float, str(current_time).split('.'))
     current_time_in_minutes = current_hour * 60 + current_minute
-    
+
     for i, lesson in enumerate(lessons):
         start_time = sum(float(x) * 60**i for i, x in enumerate(reversed(str(lesson['start_time']).split('.'))))
         end_time = sum(float(x) * 60**i for i, x in enumerate(reversed(str(lesson['end_time']).split('.'))))
-        
+
         if start_time <= current_time_in_minutes <= end_time:
             return 0, end_time - current_time_in_minutes
-        
+
         if i < len(lessons) - 1:
-            next_start_time = sum(float(x) * 60**i for i, x in enumerate(reversed(lessons[i+1]['start_time'].split('.'))))
+            next_start_time = sum(float(x) * 60**i for i, x in enumerate(reversed(lessons[i + 1]['start_time'].split('.'))))
             if end_time < current_time_in_minutes < next_start_time:
                 return 1, next_start_time - current_time_in_minutes
-    
+
     return -1, None
 
 
@@ -58,7 +58,7 @@ async def newsletter(user_id: int, text: str, auto: bool, bot: aiogram.Bot) -> N
         try:
             if (user['send_notifications'] and auto) or not auto:
                 await bot.send_message(chat_id=user['user_id'], text=text,
-                                        reply_markup=InlineKeyboardMarkup(inline_keyboard=[[__BACK_IN_MAIN_MENU__]]))
+                                       reply_markup=InlineKeyboardMarkup(inline_keyboard=[[__BACK_IN_MAIN_MENU__]]))
                 log.info(str(user['user_id']), f'Sent: {user['user_id']}')
 
         except TelegramBadRequest:
@@ -119,7 +119,7 @@ async def GetPermissions(user_id: int) -> Permissions | Exception:
     log.info(user_id, f'Getting permissions {user_id}')
 
     try:
-        log.debug(user_id, f'Copying DefaultPermissions')
+        log.debug(user_id, 'Copying DefaultPermissions')
         permission = copy(PM.DefaultPermissions)
 
         user = await rq_users.GetUser(user_id)
@@ -149,7 +149,7 @@ def RemoveHTMLTags(text: str) -> str:
 
 def get_permissions(permissions: dict) -> str:
     msg = ''
-    
+
     for key, value in permissions.items():
         if isinstance(value, dict):
             if 'description' in value and 'value' in value:

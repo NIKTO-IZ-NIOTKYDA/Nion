@@ -13,8 +13,10 @@ router = APIRouter(tags=['Roles'])
 
 @router.get('/GetRole', summary='Get role')
 async def GetRole(RoleID: int, body: Core, request: Request):
-    if (await utils.CheckUserID(body.UserID, body.UserID)) != None: return await utils.CheckUserID(body.UserID, body.UserID)
-    if (await utils.GetPermissions(body.UserID)).admin_panel.use.role == False: return await utils.Error403(request, body.UserID)
+    if (await utils.CheckUserID(body.UserID, body.UserID)) != None:
+        return await utils.CheckUserID(body.UserID, body.UserID)
+    if not (await utils.GetPermissions(body.UserID)).admin_panel.use.role:
+        return await utils.Error403(request, body.UserID)
 
     role: rq.Role = await rq.GetRole(body.UserID, RoleID)
 
@@ -44,8 +46,10 @@ async def GetRole(RoleID: int, body: Core, request: Request):
 
 @router.get('/GetRoles', summary='Get roles')
 async def GetRoles(body: Core, request: Request):
-    if (await utils.CheckUserID(body.UserID, body.UserID)) != None: return await utils.CheckUserID(body.UserID, body.UserID)
-    if (await utils.GetPermissions(body.UserID)).admin_panel.use.role == False: return await utils.Error403(request, body.UserID)
+    if (await utils.CheckUserID(body.UserID, body.UserID)) != None:
+        return await utils.CheckUserID(body.UserID, body.UserID)
+    if not (await utils.GetPermissions(body.UserID)).admin_panel.use.role:
+        return await utils.Error403(request, body.UserID)
 
     roles: list[rq.Role] = await rq.GetRoles(body.UserID)
     roles_json: list[dict[str, str]] = []
@@ -55,14 +59,16 @@ async def GetRoles(body: Core, request: Request):
             'role_id': role.role_id,
             'name': role.name
         })
-    
-    return JSONResponse(status_code=status.HTTP_200_OK, content={ 'roles': roles_json })
+
+    return JSONResponse(status_code=status.HTTP_200_OK, content={'roles': roles_json})
 
 
 @router.post('/SetRole', summary='Set role')
 async def SetRole(body: EditRoleBody, request: Request):
-    if (await utils.CheckUserID(body.UserID, body.UserID)) != None: return await utils.CheckUserID(body.UserID, body.UserID)
-    if (await utils.GetPermissions(body.UserID)).admin_panel.use.role == False: return await utils.Error403(request, body.UserID)
+    if (await utils.CheckUserID(body.UserID, body.UserID)) != None:
+        return await utils.CheckUserID(body.UserID, body.UserID)
+    if not (await utils.GetPermissions(body.UserID)).admin_panel.use.role:
+        return await utils.Error403(request, body.UserID)
 
     if isinstance((await rq.GetRole(body.UserID, body.RoleID)), rq.Role):
         return JSONResponse(status_code=status.HTTP_409_CONFLICT, content={
@@ -79,8 +85,7 @@ async def SetRole(body: EditRoleBody, request: Request):
                     'details': f'A user with an id {user_id} was not found'
                 })
 
-
-    permissions = rq.PM.JSONToClass(body.UserID, { 'permissions': body.permissions })
+    permissions = rq.PM.JSONToClass(body.UserID, {'permissions': body.permissions})
     if isinstance(permissions, Exception) or permissions == Exception:
         return JSONResponse(status_code=status.HTTP_400_BAD_REQUEST, content={
                 'status': 'fail',
@@ -103,8 +108,10 @@ async def SetRole(body: EditRoleBody, request: Request):
 
 @router.post('/UpdateRole', summary='Update role')
 async def UpdateRole(body: EditRoleBody, request: Request):
-    if (await utils.CheckUserID(body.UserID, body.UserID)) != None: return await utils.CheckUserID(body.UserID, body.UserID)
-    if (await utils.GetPermissions(body.UserID)).admin_panel.use.role == False: return await utils.Error403(request, body.UserID)
+    if (await utils.CheckUserID(body.UserID, body.UserID)) != None:
+        return await utils.CheckUserID(body.UserID, body.UserID)
+    if not (await utils.GetPermissions(body.UserID)).admin_panel.use.role:
+        return await utils.Error403(request, body.UserID)
 
     if not isinstance((await rq.GetRole(body.UserID, body.RoleID)), rq.Role):
         return JSONResponse(status_code=status.HTTP_409_CONFLICT, content={
@@ -121,8 +128,7 @@ async def UpdateRole(body: EditRoleBody, request: Request):
                     'details': f'A user with an id {user_id} was not found'
                 })
 
-
-    permissions = rq.PM.JSONToClass(body.UserID, { 'permissions': body.permissions })
+    permissions = rq.PM.JSONToClass(body.UserID, {'permissions': body.permissions})
     if isinstance(permissions, Exception) or permissions == Exception:
         return JSONResponse(status_code=status.HTTP_400_BAD_REQUEST, content={
                 'status': 'fail',
@@ -145,8 +151,10 @@ async def UpdateRole(body: EditRoleBody, request: Request):
 
 @router.delete('/DeleteRole', summary='Delete role')
 async def DeleteRole(RoleID: int, body: Core, request: Request):
-    if (await utils.CheckUserID(body.UserID, body.UserID)) != None: return await utils.CheckUserID(body.UserID, body.UserID)
-    if (await utils.GetPermissions(body.UserID)).admin_panel.use.role == False: return await utils.Error403(request, body.UserID)
+    if (await utils.CheckUserID(body.UserID, body.UserID)) != None:
+        return await utils.CheckUserID(body.UserID, body.UserID)
+    if not (await utils.GetPermissions(body.UserID)).admin_panel.use.role:
+        return await utils.Error403(request, body.UserID)
 
     role = await rq.GetRole(body.UserID, RoleID)
 

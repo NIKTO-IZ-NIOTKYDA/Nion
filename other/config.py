@@ -14,13 +14,20 @@ class LogLevel(IntEnum):
 
 def GetLogLevel(log_level: int) -> LogLevel:
     try:
-        if int(log_level) == 0: return LogLevel.DEBUG
-        elif int(log_level) == 1: return LogLevel.INFO
-        elif int(log_level) == 2: return LogLevel.WARN
-        elif int(log_level) == 3: return LogLevel.ERROR
-        elif int(log_level) == 4: return LogLevel.CRITICAL_ERROR
-        else: raise AttributeError
-    except ValueError as VE: raise VE
+        if int(log_level) == 0:
+            return LogLevel.DEBUG
+        elif int(log_level) == 1:
+            return LogLevel.INFO
+        elif int(log_level) == 2:
+            return LogLevel.WARN
+        elif int(log_level) == 3:
+            return LogLevel.ERROR
+        elif int(log_level) == 4:
+            return LogLevel.CRITICAL_ERROR
+        else:
+            raise AttributeError
+    except ValueError as VE:
+        raise VE
 
 
 class CONFIG(BaseSettings):
@@ -71,7 +78,6 @@ class CONFIG(BaseSettings):
     ]
 
     model_config = SettingsConfigDict()
-    
 
     def GetRelease(self) -> str:
         return str(f'Release {self.VERSION_MAJOR}.{self.VERSION_MINOR}.{self.VERSION_PATCH} [{self.VERSION_TYPE}]')

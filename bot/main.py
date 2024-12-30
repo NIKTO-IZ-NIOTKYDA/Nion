@@ -16,12 +16,12 @@ from other.log.logging import logging
 import handlers.core as core
 
 import handlers.menu
-import handlers.start
-import handlers.lessons
-import handlers.profile
-import handlers.schedule
-import handlers.admin_panel
-import handlers.update_lesson
+import handlers.start  # noqa: F401
+import handlers.lessons  # noqa: F401
+import handlers.profile  # noqa: F401
+import handlers.schedule  # noqa: F401
+import handlers.admin_panel  # noqa: F401
+import handlers.update_lesson  # noqa: F401
 
 from keyboards.other import __BACK_IN_MAIN_MENU__
 

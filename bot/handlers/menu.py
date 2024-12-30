@@ -6,11 +6,9 @@ from aiogram.exceptions import TelegramBadRequest
 from other.config import config
 from utils import CheckAuthUser
 from handlers.start import start
+from handlers.core import GetRouter
 from keyboards.users import GenStart
-from keyboards.users import __HOMEWORK__
-from handlers.core import log, GetRouter
 from requests.users import UpdateUser, GetUser
-from keyboards.other import __BACK_IN_MAIN_MENU__
 
 
 router = GetRouter()
@@ -34,4 +32,5 @@ async def menu(callback: CallbackQuery, state: FSMContext):
                 [role['role_id'] for role in user['roles']]
             )
 
-        except TelegramBadRequest: await start(callback.message)
+        except TelegramBadRequest:
+            await start(callback.message)

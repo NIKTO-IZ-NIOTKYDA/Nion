@@ -13,7 +13,6 @@ class PermissionsManager:
     DefaultPermissions: Permissions = None
     OwnerPermissions: Permissions = None
 
-
     def __init__(self):
         try:
             self.log.init('Initialization PermissionsManager is started')
@@ -33,10 +32,9 @@ class PermissionsManager:
             self.log.cerror(None, 'File \'permissions.json\' not found!')
             exit(1)
 
-
     def JSONToClass(self, user_id: int | None, p: dict) -> Permissions:
         try:
-            self.log.debug(user_id, f'Convert JSON in Permissions is started')
+            self.log.debug(user_id, 'Convert JSON in Permissions is started')
 
             data = {
                 'lessons': p['permissions']['lessons'],
@@ -55,7 +53,6 @@ class PermissionsManager:
             self.log.error(user_id, str(Error))
             return Error
 
-
     def ClassToJSON(self, user_id: int | None, permissions: Permissions) -> dict | Exception:
         try:
             self.log.debug(user_id, 'Convert Permissions in JSON is started')
@@ -63,13 +60,12 @@ class PermissionsManager:
             permissions_schema = PermissionsSchema()
             json = permissions_schema.dump(permissions)
 
-            self.log.debug(user_id, f'Convert Permissions in JSON is completed')
-            return { 'permissions': json }
+            self.log.debug(user_id, 'Convert Permissions in JSON is completed')
+            return {'permissions': json}
 
         except Exception as Error:
             self.log.error(user_id, str(Error))
             return Error
-
 
     def Combine(self, user_id: int | None, obj_1: Permissions, obj_2: Permissions) -> Permissions:
         """
@@ -80,7 +76,7 @@ class PermissionsManager:
         try:
             dict_1 = self.ClassToJSON(user_id, obj_1)
             dict_2 = self.ClassToJSON(user_id, obj_2)
-            
+
             def merge_dicts(dict1, dict2):
                 merged = {}
 

@@ -12,7 +12,7 @@ from other.PermissionsManager.PermissionsManager import PM
 
 async def __SaveData(user_id: int | None, session: AsyncSession) -> None:
     log.debug(user_id, 'Saving data to db')
-              
+
     await session.flush()
     await session.commit()
 
@@ -25,7 +25,7 @@ async def SyncLessons(lessons: list[list[str]]):
             # Get the list of existing lesson IDs
             existing_lesson: list[Lesson] = (await session.scalars(select(Lesson))).all()
             existing_lesson_ids: list[str] = []
-            
+
             for lesson in existing_lesson:
                 existing_lesson_ids.append(lesson.lesson_id)
 
@@ -33,7 +33,7 @@ async def SyncLessons(lessons: list[list[str]]):
             for lesson in lessons:
                 if lesson[0] not in existing_lesson_ids:
                     log.init(f'Subject \'{lesson[0]}\' not found in the Lessons table')
-                    
+
                     session.add(Lesson(lesson_id=lesson[0], photo=None))
                     log.init(f'Subject \'{lesson[0]}\' added in the Lessons table')
 
@@ -42,7 +42,8 @@ async def SyncLessons(lessons: list[list[str]]):
                 deleting = True
 
                 for lesson in lessons:
-                    if lesson_id == lesson[0]: deleting = False
+                    if lesson_id == lesson[0]:
+                        deleting = False
 
                 if deleting:
                     await session.delete(await session.scalar(select(Lesson).where(Lesson.lesson_id == lesson_id)))
@@ -65,42 +66,44 @@ async def SyncRoles():
 
             if user == AttributeError:
                 log.warn(None, f'Getting \'{config.TG_ID_OWNER}\' is not complied')
-                
+
                 log.info(None, f'Adding user \'{config.TG_ID_OWNER}\'')
                 await SetUser(config.TG_ID_OWNER, config.TG_USERNAME_OWNER, config.TG_FIRST_NAME_OWNER, config.TG_LAST_NAME_OWNER, [])
             else:
                 log.debug(None, f'Getting \'{config.TG_ID_OWNER}\' is complied')
 
-            log.debug(None, f'Getting role owner is started')
+            log.debug(None, 'Getting role owner is started')
             role: Role = await GetRole(None, config.ID_ROLE_OWNER)
-            log.debug(None, f'Getting role owner is complied')
+            log.debug(None, 'Getting role owner is complied')
 
             if role != AttributeError:
                 user_ids = []
-                for user in role.users: user_ids.append(user.user_id)
+                for user in role.users:
+                    user_ids.append(user.user_id)
 
                 await UpdateRole(user_id=None, role_id=config.ID_ROLE_OWNER, user_ids=user_ids, name=role.name, permissions=PM.OwnerPermissions)
             else:
                 await SetRole(user_id=None, role_id=config.ID_ROLE_OWNER, user_ids=[config.TG_ID_OWNER], name=config.NAME_ROLE_OWNER, permissions=PM.OwnerPermissions)
 
-            log.debug(None, f'Getting role default is started')
+            log.debug(None, 'Getting role default is started')
             role: Role = await GetRole(None, config.ID_ROLE_DEFAULT)
-            log.debug(None, f'Getting role default is complied')
+            log.debug(None, 'Getting role default is complied')
 
             if role != AttributeError:
                 user_ids = []
-                for user in role.users: user_ids.append(user.user_id)
+                for user in role.users:
+                    user_ids.append(user.user_id)
 
                 await UpdateRole(user_id=None, role_id=config.ID_ROLE_DEFAULT, user_ids=user_ids, name=role.name, permissions=PM.DefaultPermissions)
             else:
                 await SetRole(user_id=None, role_id=config.ID_ROLE_DEFAULT, user_ids=[], name=config.NAME_ROLE_DEFAULT, permissions=PM.DefaultPermissions)
-            
+
             await __SaveData(None, session)
         except Exception as Error:
             log.error(None, str(Error))
 
 
-### SETTING
+# SETTING
 
 
 async def SetUser(user_id: int, username: str, first_name: str, last_name: str, roles: list[Role] = []) -> None | IntegrityError | Exception:
@@ -109,12 +112,12 @@ async def SetUser(user_id: int, username: str, first_name: str, last_name: str, 
     async with async_session() as session:
         try:
             session.add(User(
-                user_id = user_id,
-                username = username,
-                first_name = first_name,
-                last_name = last_name,
-                send_notifications = True,
-                roles = roles
+                user_id=user_id,
+                username=username,
+                first_name=first_name,
+                last_name=last_name,
+                send_notifications=True,
+                roles=roles
             ))
 
             await __SaveData(user_id, session)
@@ -123,7 +126,7 @@ async def SetUser(user_id: int, username: str, first_name: str, last_name: str, 
         except IntegrityError as Error:
             log.error(user_id, f'ERROR: {Error.orig} REQUESTS: {Error.statement}')
             return Error
-        
+
         except Exception as Error:
             log.error(user_id, str(Error))
             return Error
@@ -139,7 +142,7 @@ async def SetRole(user_id: int, role_id: int, user_ids: list[int], name: str, pe
 
             for user_id_ in user_ids:
                 users.append(await GetUser(user_id, user_id_))
-            
+
             session.add(instance=Role(
                 role_id=role_id,
                 name=name,
@@ -153,7 +156,7 @@ async def SetRole(user_id: int, role_id: int, user_ids: list[int], name: str, pe
         except IntegrityError as Error:
             log.error(user_id, f'ERROR: {Error.orig} REQUESTS: {Error.statement}')
             return Error
-        
+
         except Exception as Error:
             log.error(user_id, str(Error))
             return Error
@@ -165,20 +168,20 @@ async def SetSendNotifications(user_id: int, send_notifications: bool) -> None |
     async with async_session() as session:
         try:
             (await session.scalar(select(User).where(User.user_id == user_id))).send_notifications = send_notifications
-            
+
             await __SaveData(user_id, session)
             return
 
         except AttributeError as Error:
             log.error(user_id, str(Error))
             return Error
-                
+
         except Exception as Error:
             log.error(user_id, str(Error))
             return Error
 
 
-### GETTING
+# GETTING
 
 
 async def GetUser(user_id: int, rq_user_id: int) -> User | AttributeError | Exception:
@@ -191,9 +194,9 @@ async def GetUser(user_id: int, rq_user_id: int) -> User | AttributeError | Exce
             if user == None:
                 log.warn(user_id, f'User \'{rq_user_id}\' not found!')
                 return AttributeError
-            else: 
+            else:
                 return user
-        
+
         except Exception as Error:
             log.error(user_id, str(Error))
             return Error
@@ -223,7 +226,7 @@ async def GetRole(user_id: int, role_id: int) -> Role | AttributeError | Excepti
                 return AttributeError
             else:
                 return role
-        
+
         except Exception as Error:
             log.error(user_id, str(Error))
             return Error
@@ -245,28 +248,29 @@ async def GetLesson(user_id: int, lesson_id: str) -> Lesson | AttributeError | E
     log.info(user_id, f'Getting Lesson: \'{lesson_id}\'')
 
     async with async_session() as session:
-        try:   
+        try:
             return (await session.scalar(select(Lesson).where(Lesson.lesson_id == lesson_id)))
 
         except AttributeError as Error:
-                log.error(user_id, str(Error))
-                return Error
-        
+            log.error(user_id, str(Error))
+            return Error
+
         except Exception as Error:
             log.error(user_id, str(Error))
             return Error
 
 
 async def GetLessons(user_id: int) -> list[Lesson] | AttributeError | Exception:
-    log.info(user_id, f'Getting Lessons')
+    log.info(user_id, 'Getting Lessons')
 
     async with async_session() as session:
-        try: return (await session.scalars(select(Lesson))).all()
+        try:
+            return (await session.scalars(select(Lesson))).all()
 
         except AttributeError as Error:
-                log.error(user_id, str(Error))
-                return Error
-        
+            log.error(user_id, str(Error))
+            return Error
+
         except Exception as Error:
             log.error(user_id, str(Error))
             return Error
@@ -280,24 +284,25 @@ async def GetSchedule(user_id: int) -> Schedule | FileNotFoundError | Exception:
             schedule = await session.scalar(select(Schedule).where(Schedule.id == 1))
 
             if schedule == None or schedule.file == None:
-                log.warn(user_id, f'Schedule not found!')
+                log.warn(user_id, 'Schedule not found!')
                 return FileNotFoundError
-            else: return schedule
-        
+            else:
+                return schedule
+
         except Exception as Error:
             log.error(user_id, str(Error))
             return Error
 
 
-### Updating
+# Updating
 
 
 async def UpdateLesson(user_id: int,
-                    lesson_id: str,
-                    homework: str | None = None,
-                    photo: bool | None = None,
-                    url: str | None = None
-                    ) -> None | AttributeError | Exception:
+                       lesson_id: str,
+                       homework: str | None = None,
+                       photo: bool | None = None,
+                       url: str | None = None
+                       ) -> None | AttributeError | Exception:
     log.info(user_id, f'Setting Lesson: \'{lesson_id}\' / homework: \'{homework}\' / photo: \'{photo}\' / url: \'{url}\'')
 
     async with async_session() as session:
@@ -314,7 +319,7 @@ async def UpdateLesson(user_id: int,
         except AttributeError as Error:
             log.error(user_id, str(Error))
             return Error
-        
+
         except Exception as Error:
             log.error(user_id, str(Error))
             return Error
@@ -343,7 +348,7 @@ async def UpdateUser(user_id: int, username: str, first_name: str, last_name: st
         except IntegrityError as Error:
             log.error(user_id, f'ERROR: {Error.orig} REQUESTS: {Error.statement}')
             return Error
-        
+
         except Exception as Error:
             log.error(user_id, str(Error))
             return Error
@@ -357,15 +362,14 @@ async def UpdateSchedule(user_id: int, photo: bytes | None) -> None | Indentatio
             schedule = await session.scalar(select(Schedule).where(Schedule.id == 1))
 
             if schedule == None:
-                log.error(user_id, f'SCHEDULE NOT FOUNT')
-                
+                log.error(user_id, 'SCHEDULE NOT FOUNT')
+
                 session.add(Schedule(
-                    id = 1
+                    id=1
                 ))
                 await __SaveData(user_id, session)
 
                 return (await UpdateSchedule(user_id, photo))
-                
 
             schedule.file = photo
 
@@ -375,7 +379,7 @@ async def UpdateSchedule(user_id: int, photo: bytes | None) -> None | Indentatio
         except IntegrityError as Error:
             log.error(user_id, f'ERROR: {Error.orig} REQUESTS: {Error.statement}')
             return Error
-        
+
         except Exception as Error:
             log.error(user_id, str(Error))
             return Error
@@ -389,7 +393,7 @@ async def UpdateRole(user_id, role_id: int, user_ids: list[int], name: str, perm
             role = await session.scalar(select(Role).where(Role.role_id == role_id))
 
             if role == None:
-                log.error(user_id, f'ROLE NOT FOUNT')
+                log.error(user_id, 'ROLE NOT FOUNT')
                 return NotFoundErr
 
             users: list[User] = []
@@ -400,7 +404,6 @@ async def UpdateRole(user_id, role_id: int, user_ids: list[int], name: str, perm
                     return ArithmeticError
                 else:
                     users.append(await session.merge(user))
-            
 
             role.users = users
             role.name = name
@@ -412,13 +415,13 @@ async def UpdateRole(user_id, role_id: int, user_ids: list[int], name: str, perm
         except IntegrityError as Error:
             log.error(user_id, f'ERROR: {Error.orig} REQUESTS: {Error.statement}')
             return Error
-        
+
         except Exception as Error:
             log.error(user_id, str(Error))
             return Error
 
 
-### DELETING
+# DELETING
 
 
 async def DeleteUser(user_id: int, user: User) -> None | AttributeError | Exception:

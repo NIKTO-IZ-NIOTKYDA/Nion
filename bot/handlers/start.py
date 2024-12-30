@@ -4,8 +4,8 @@ from aiogram.filters import Command
 from utils import CheckAuthUser
 from other.config import config
 from requests.users import SetUser
+from handlers.core import GetRouter
 from keyboards.users import GenStart
-from handlers.core import log, GetRouter
 
 
 router = GetRouter()

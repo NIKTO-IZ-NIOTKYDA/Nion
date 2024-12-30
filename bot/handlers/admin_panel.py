@@ -33,9 +33,11 @@ async def admin_panel(callback: CallbackQuery, state: FSMContext):
 
 @router.callback_query(F.data == 'admin_panel:newsletter_input')
 async def admin_panel_newsletter_input(callback: CallbackQuery, state: FSMContext):
-    if not (await utils.GetPermissions(callback.message.chat.id)).admin_panel.use.newsletter: 
-        try: await utils.RQReporter(c=callback)
-        except utils.AccessDeniedError: return
+    if not (await utils.GetPermissions(callback.message.chat.id)).admin_panel.use.newsletter:
+        try:
+            await utils.RQReporter(c=callback)
+        except utils.AccessDeniedError:
+            return
 
     await callback.message.edit_text('Введите текст рассылки')
     await state.set_state(FormNewsletter.input_text)
@@ -43,12 +45,14 @@ async def admin_panel_newsletter_input(callback: CallbackQuery, state: FSMContex
 
 @router.message(F.text, FormNewsletter.input_text)
 async def admin_panel_form_newsletter_input_text(message: Message, state: FSMContext):
-    if not (await utils.GetPermissions(message.chat.id)).admin_panel.use.newsletter: 
-        try: await utils.RQReporter(m=message)
-        except utils.AccessDeniedError: return
+    if not (await utils.GetPermissions(message.chat.id)).admin_panel.use.newsletter:
+        try:
+            await utils.RQReporter(m=message)
+        except utils.AccessDeniedError:
+            return
 
-    await message.answer(f'<b>‼️ВЫ ТОЧНО ХОТИТЕ ОТПРАВИТЬ СООБЩЕНИЕ ВСЕМ ПОЛЬЗОВАТЕЛЯМ⁉️</b>\nТЕКСТ СООБЩЕНИЯ:\n{message.text}', 
-                            reply_markup=__NEWSLETTER_WARN__)
+    await message.answer(f'<b>‼️ВЫ ТОЧНО ХОТИТЕ ОТПРАВИТЬ СООБЩЕНИЕ ВСЕМ ПОЛЬЗОВАТЕЛЯМ⁉️</b>\nТЕКСТ СООБЩЕНИЯ:\n{message.text}',
+                         reply_markup=__NEWSLETTER_WARN__)
 
     await state.set_state(FormNewsletter.warn)
     await state.set_data({'text': message.text})
@@ -56,11 +60,13 @@ async def admin_panel_form_newsletter_input_text(message: Message, state: FSMCon
 
 @router.callback_query(F.data == 'admin_panel:newsletter', FormNewsletter.warn)
 async def admin_panel_newsletter(callback: CallbackQuery, state: FSMContext):
-    
-    if not (await utils.GetPermissions(callback.message.chat.id)).admin: 
-        try: await utils.RQReporter(c=callback)
-        except utils.AccessDeniedError: return
-    
+
+    if not (await utils.GetPermissions(callback.message.chat.id)).admin:
+        try:
+            await utils.RQReporter(c=callback)
+        except utils.AccessDeniedError:
+            return
+
     await callback.message.edit_text('✅ Рассылка началась!', reply_markup=InlineKeyboardMarkup(inline_keyboard=[
         [GenButtonBack('admin_panel')],
         [__BACK_IN_MAIN_MENU__]
@@ -71,11 +77,13 @@ async def admin_panel_newsletter(callback: CallbackQuery, state: FSMContext):
 
 @router.callback_query(F.data == 'admin_panel:status_server')
 async def admin_panel_status_server(callback: CallbackQuery):
-    if not (await utils.GetPermissions(callback.message.chat.id)).admin_panel.use.server_status: 
-        try: await utils.RQReporter(c=callback)
-        except utils.AccessDeniedError: return
+    if not (await utils.GetPermissions(callback.message.chat.id)).admin_panel.use.server_status:
+        try:
+            await utils.RQReporter(c=callback)
+        except utils.AccessDeniedError:
+            return
 
-    log.info(callback.message.chat.id, 'Admin requested a server status report, generation . . .')  
+    log.info(callback.message.chat.id, 'Admin requested a server status report, generation . . .')
 
     log.debug(callback.message.chat.id, 'Generating information about: SystemName')
     SystemName = str(system())
@@ -108,9 +116,8 @@ async def admin_panel_status_server(callback: CallbackQuery):
     for interf in all_interf:
         Network = f'{Network}- {interf}: {all_interf[interf][0][1]}\n'
 
-    
     report = f'OS: {SystemName} {SystemRelease}\nPython: {PythonVersion}\n\nЗагруженость:\n\nCPU: {CPU}%\nMemory: {Memory.percent}%\nMemory Swap: {Memory_Swap.percent}%\nDisks: {Disks.percent}%\nNetwork: {Network}'
-    
+
     log.info(callback.message.chat.id, 'Successfully !')
 
     await callback.message.edit_text(report, reply_markup=InlineKeyboardMarkup(inline_keyboard=[[GenButtonBack('admin_panel')], [__BACK_IN_MAIN_MENU__]]))
@@ -120,42 +127,48 @@ async def admin_panel_status_server(callback: CallbackQuery):
 
 @router.callback_query(F.data == 'admin_panel:role')
 async def admin_panel_role(callback: CallbackQuery, state: FSMContext):
-    if not (await utils.GetPermissions(callback.message.chat.id)).admin_panel.use.role: 
-        try: await utils.RQReporter(c=callback)
-        except utils.AccessDeniedError: return
-    
+    if not (await utils.GetPermissions(callback.message.chat.id)).admin_panel.use.role:
+        try:
+            await utils.RQReporter(c=callback)
+        except utils.AccessDeniedError:
+            return
+
     await state.clear()
-    
+
     await callback.message.edit_text('👇 Выберите роль', reply_markup=(await GenRoleMenu(callback.message.chat.id)))
 
 
 @router.callback_query(F.data.startswith('admin_panel:role:open:'))
 async def admin_panel_role_open(callback: CallbackQuery):
-    if not (await utils.GetPermissions(callback.message.chat.id)).admin_panel.use.role: 
-        try: await utils.RQReporter(c=callback)
-        except utils.AccessDeniedError: return
-    
+    if not (await utils.GetPermissions(callback.message.chat.id)).admin_panel.use.role:
+        try:
+            await utils.RQReporter(c=callback)
+        except utils.AccessDeniedError:
+            return
+
     role_id: int = int(callback.data.replace('admin_panel:role:open:', ''))
     role = await rq_roles.GetRole(callback.message.chat.id, role_id, 60)
     users = '' if role['users'] != [] else '❌'
 
     for user in role['users']:
-        users += f'\'{user['first_name']}\'' + ' [ @' + str(user['username'])+(' ], ' if user['user_id'] != role['users'][-1]['user_id'] else ' ]')
+        users += f'\'{user['first_name']}\'' + ' [ @' + str(user['username']) + (' ], ' if user['user_id'] != role['users'][-1]['user_id'] else ' ]')
 
     await callback.message.edit_text(f'ID роли: <code>{role['role_id']}</code>\nНазвание роли: {role['name']}\nПользователи с этой ролью: {users}\nРазрешения:\n{utils.get_permissions(role['permissions'])}', reply_markup=(await GenRoleOpen(role_id)))
 
 
 @router.callback_query(F.data == 'admin_panel:role:create')
 async def admin_panel_role_create(callback: CallbackQuery, state: FSMContext):
-    if not (await utils.GetPermissions(callback.message.chat.id)).admin_panel.use.role: 
-        try: await utils.RQReporter(c=callback)
-        except utils.AccessDeniedError: return
-    
+    if not (await utils.GetPermissions(callback.message.chat.id)).admin_panel.use.role:
+        try:
+            await utils.RQReporter(c=callback)
+        except utils.AccessDeniedError:
+            return
+
     await callback.message.edit_text(f'➡️ Введите ID роли которую хотите создать. ID - это уникальный индикатор роли. Занятые ID: {[role['role_id'] for role in (await rq_roles.GetRoles(callback.message.chat.id))]}',
-        reply_markup=InlineKeyboardMarkup(inline_keyboard=[
-                [GenButtonBack('admin_panel:role')],
-                [__BACK_IN_MAIN_MENU__]
-            ]
+                                     reply_markup=InlineKeyboardMarkup(inline_keyboard=[
+                                         [GenButtonBack('admin_panel:role')],
+                                         [__BACK_IN_MAIN_MENU__]
+                                         ]
         ))
 
     await state.set_state(FormRoleCreate.input_id)
@@ -163,15 +176,17 @@ async def admin_panel_role_create(callback: CallbackQuery, state: FSMContext):
 
 @router.message(F.text, FormRoleCreate.input_id)
 async def admin_panel_role_create_input_id(message: Message, state: FSMContext):
-    if not (await utils.GetPermissions(message.chat.id)).admin_panel.use.role: 
-        try: await utils.RQReporter(m=message)
-        except utils.AccessDeniedError: return
+    if not (await utils.GetPermissions(message.chat.id)).admin_panel.use.role:
+        try:
+            await utils.RQReporter(m=message)
+        except utils.AccessDeniedError:
+            return
 
     if not message.text.isdigit() or len(message.text) > 5:
         await message.answer('‼️ Некорректные входные данные!\n\n➡️ Введите ID')
 
         await state.set_state(FormRoleCreate.input_id)
-        
+
         return
 
     await state.set_data({
@@ -179,25 +194,27 @@ async def admin_panel_role_create_input_id(message: Message, state: FSMContext):
     })
 
     await message.answer('✅ ID роли успешно сохранено!\n\n➡️ Введите название роли которую хотите создать. В названии можно использовать HTML тэги!',
-        reply_markup=InlineKeyboardMarkup(inline_keyboard=[
-                [GenButtonBack('admin_panel:role')],
-                [__BACK_IN_MAIN_MENU__]
-            ]))
+                         reply_markup=InlineKeyboardMarkup(inline_keyboard=[
+                             [GenButtonBack('admin_panel:role')],
+                             [__BACK_IN_MAIN_MENU__]
+                             ]))
 
     await state.set_state(FormRoleCreate.input_name)
 
 
 @router.message(F.text, FormRoleCreate.input_name)
 async def admin_panel_role_create_input_name(message: Message, state: FSMContext):
-    if not (await utils.GetPermissions(message.chat.id)).admin_panel.use.role: 
-        try: await utils.RQReporter(m=message)
-        except utils.AccessDeniedError: return
+    if not (await utils.GetPermissions(message.chat.id)).admin_panel.use.role:
+        try:
+            await utils.RQReporter(m=message)
+        except utils.AccessDeniedError:
+            return
 
     if len(message.text) > 255:
         message.answer('‼️ Некорректные входные данные!\n\n➡️ Введите название')
 
         state.set_state(FormRoleCreate.input_name)
-        
+
         return
 
     await rq_roles.SetRole(
@@ -220,15 +237,19 @@ async def admin_panel_role_create_input_name(message: Message, state: FSMContext
 
 @router.callback_query(F.data.startswith('admin_panel:role:edit:') and F.data.split(':')[-1].isdigit())
 async def admin_panel_role_edit(callback: CallbackQuery, state: FSMContext):
-    if not (await utils.GetPermissions(callback.message.chat.id)).admin_panel.use.role: 
-        try: await utils.RQReporter(c=callback)
-        except utils.AccessDeniedError: return
+    if not (await utils.GetPermissions(callback.message.chat.id)).admin_panel.use.role:
+        try:
+            await utils.RQReporter(c=callback)
+        except utils.AccessDeniedError:
+            return
 
     role_id = int(callback.data.replace('admin_panel:role:edit:', ''))
 
     if role_id == config.ID_ROLE_OWNER and role_id == config.ID_ROLE_DEFAULT:
-        try: await utils.RQReporter(c=callback)
-        except utils.AccessDeniedError: return
+        try:
+            await utils.RQReporter(c=callback)
+        except utils.AccessDeniedError:
+            return
 
     role = await rq_roles.GetRole(
         callback.message.chat.id,
@@ -248,15 +269,19 @@ async def admin_panel_role_edit(callback: CallbackQuery, state: FSMContext):
 
 @router.callback_query(F.data.startswith('admin_panel:role:edit:') and F.data.endswith(':name'))
 async def admin_panel_role_edit_name(callback: CallbackQuery, state: FSMContext):
-    if not (await utils.GetPermissions(callback.message.chat.id)).admin_panel.use.role: 
-        try: await utils.RQReporter(c=callback)
-        except utils.AccessDeniedError: return
+    if not (await utils.GetPermissions(callback.message.chat.id)).admin_panel.use.role:
+        try:
+            await utils.RQReporter(c=callback)
+        except utils.AccessDeniedError:
+            return
 
     role_id = int(callback.data.split(':')[-2])
 
     if role_id == config.ID_ROLE_OWNER and role_id == config.ID_ROLE_DEFAULT:
-        try: await utils.RQReporter(c=callback)
-        except utils.AccessDeniedError: return
+        try:
+            await utils.RQReporter(c=callback)
+        except utils.AccessDeniedError:
+            return
 
     await callback.message.edit_text(
         f'➡️ Введите новое название для роли [{role_id}]',
@@ -273,16 +298,18 @@ async def admin_panel_role_edit_name(callback: CallbackQuery, state: FSMContext)
 
 
 @router.message(F.text, FormRoleEdit.input_name)
-async def admin_panel_role_edit_name(message: Message, state: FSMContext):
-    if not (await utils.GetPermissions(message.chat.id)).admin_panel.use.role: 
-        try: await utils.RQReporter(m=message)
-        except utils.AccessDeniedError: return
+async def admin_panel_role_edit_name_input(message: Message, state: FSMContext):
+    if not (await utils.GetPermissions(message.chat.id)).admin_panel.use.role:
+        try:
+            await utils.RQReporter(m=message)
+        except utils.AccessDeniedError:
+            return
 
     if len(message.text) > 255:
         message.answer(f'‼️ Некорректные входные данные!\n\n➡️ Введите новое имя для роли [{(await state.get_data())['role_id']}]')
 
         state.set_state(FormRoleCreate.input_name)
-        
+
         return
 
     role_id = int((await state.get_data())['role_id'])
@@ -293,7 +320,7 @@ async def admin_panel_role_edit_name(message: Message, state: FSMContext):
         role_id,
         [user['user_id'] for user in role['users']],
         str(message.text),
-        PM.JSONToClass(message.chat.id, { 'permissions': role['permissions'] })
+        PM.JSONToClass(message.chat.id, {'permissions': role['permissions']})
     )
 
     await message.answer('✅ Роль успешно обновлена!', reply_markup=InlineKeyboardMarkup(inline_keyboard=[
@@ -305,21 +332,25 @@ async def admin_panel_role_edit_name(message: Message, state: FSMContext):
 
 
 @router.callback_query(F.data.startswith('admin_panel:role:edit:') and F.data.endswith(':users'))
-async def admin_panel_role_edit_users(callback: CallbackQuery, state: FSMContext):
-    if not (await utils.GetPermissions(callback.message.chat.id)).admin_panel.use.role: 
-        try: await utils.RQReporter(c=callback)
-        except utils.AccessDeniedError: return
+async def admin_panel_role_edit_users_menu(callback: CallbackQuery, state: FSMContext):
+    if not (await utils.GetPermissions(callback.message.chat.id)).admin_panel.use.role:
+        try:
+            await utils.RQReporter(c=callback)
+        except utils.AccessDeniedError:
+            return
 
     role_id = int(callback.data.split(':')[-2])
 
     if role_id == config.ID_ROLE_OWNER and role_id == config.ID_ROLE_DEFAULT:
-        try: await utils.RQReporter(c=callback)
-        except utils.AccessDeniedError: return
+        try:
+            await utils.RQReporter(c=callback)
+        except utils.AccessDeniedError:
+            return
 
     role = await rq_roles.GetRole(callback.message.chat.id, role_id)
 
     await callback.message.edit_text(
-        f'➡️ Выберите действие',
+        '➡️ Выберите действие',
         reply_markup=await GenRoleEditUsers(role)
     )
 
@@ -331,30 +362,34 @@ async def admin_panel_role_edit_users(callback: CallbackQuery, state: FSMContext
 
 @router.callback_query(F.data.endswith('delete'), FormRoleEdit.edit_users)
 async def admin_panel_role_edit_users_delete(callback: CallbackQuery, state: FSMContext):
-    if not (await utils.GetPermissions(callback.message.chat.id)).admin_panel.use.role: 
-        try: await utils.RQReporter(c=callback)
-        except utils.AccessDeniedError: return
+    if not (await utils.GetPermissions(callback.message.chat.id)).admin_panel.use.role:
+        try:
+            await utils.RQReporter(c=callback)
+        except utils.AccessDeniedError:
+            return
 
     role_id = int(callback.data.split(':')[-4])
     user_delete_id = int(callback.data.split(':')[-2])
 
     if role_id == config.ID_ROLE_OWNER and role_id == config.ID_ROLE_DEFAULT:
-        try: await utils.RQReporter(c=callback)
-        except utils.AccessDeniedError: return
+        try:
+            await utils.RQReporter(c=callback)
+        except utils.AccessDeniedError:
+            return
 
     role = await rq_roles.GetRole(callback.message.chat.id, role_id)
     new_user_ids_list: list[int] = []
-    
+
     for user in role['users']:
         if user['user_id'] != user_delete_id:
             new_user_ids_list.append(user['user_id'])
-    
+
     await rq_roles.UpdateRole(
         callback.message.chat.id,
         role_id,
         new_user_ids_list,
         role['name'],
-        PM.JSONToClass(callback.message.chat.id, { 'permissions': role['permissions']} )
+        PM.JSONToClass(callback.message.chat.id, {'permissions': role['permissions']})
     )
 
     try:
@@ -369,7 +404,7 @@ async def admin_panel_role_edit_users_delete(callback: CallbackQuery, state: FSM
     role = await rq_roles.GetRole(callback.message.chat.id, role_id)
 
     await callback.message.edit_text(
-        f'➡️ Выберите действие',
+        '➡️ Выберите действие',
         reply_markup=await GenRoleEditUsers(role)
     )
 
@@ -381,18 +416,22 @@ async def admin_panel_role_edit_users_delete(callback: CallbackQuery, state: FSM
 
 @router.callback_query(F.data.endswith(':users:add'), FormRoleEdit.edit_users)
 async def admin_panel_role_edit_users(callback: CallbackQuery, state: FSMContext):
-    if not (await utils.GetPermissions(callback.message.chat.id)).admin_panel.use.role: 
-        try: await utils.RQReporter(c=callback)
-        except utils.AccessDeniedError: return
+    if not (await utils.GetPermissions(callback.message.chat.id)).admin_panel.use.role:
+        try:
+            await utils.RQReporter(c=callback)
+        except utils.AccessDeniedError:
+            return
 
     role_id = int(callback.data.split(':')[-3])
 
     if role_id == config.ID_ROLE_OWNER and role_id == config.ID_ROLE_DEFAULT:
-        try: await utils.RQReporter(c=callback)
-        except utils.AccessDeniedError: return
+        try:
+            await utils.RQReporter(c=callback)
+        except utils.AccessDeniedError:
+            return
 
     await callback.message.edit_text(
-        f'➡️ Введите TelegramID или Username пользователя (Без \'@\')\n\n❗️ Этот пользователь должен пользоваться ботом',
+        '➡️ Введите TelegramID или Username пользователя (Без \'@\')\n\n❗️ Этот пользователь должен пользоваться ботом',
         reply_markup=InlineKeyboardMarkup(inline_keyboard=[
             [GenButtonBack(f'admin_panel:role:edit:{role_id}:users')],
             [__BACK_IN_MAIN_MENU__]
@@ -407,25 +446,29 @@ async def admin_panel_role_edit_users(callback: CallbackQuery, state: FSMContext
 
 @router.message(F.text, FormRoleEdit.input_user_id_or_username)
 async def admin_panel_role_edit_users_input_user_id_or_username(message: Message, state: FSMContext):
-    if not (await utils.GetPermissions(message.chat.id)).admin_panel.use.role: 
-        try: await utils.RQReporter(m=message)
-        except utils.AccessDeniedError: return
+    if not (await utils.GetPermissions(message.chat.id)).admin_panel.use.role:
+        try:
+            await utils.RQReporter(m=message)
+        except utils.AccessDeniedError:
+            return
 
     role_id = int((await state.get_data())['role_id'])
 
     if role_id == config.ID_ROLE_OWNER and role_id == config.ID_ROLE_DEFAULT:
-        try: await utils.RQReporter(m=message)
-        except utils.AccessDeniedError: return
-    
+        try:
+            await utils.RQReporter(m=message)
+        except utils.AccessDeniedError:
+            return
+
     users = await rq_users.GetUsers(message.chat.id)
     isExists = False
     user_id = None
-    
+
     for user in users:
         if str(user['user_id']) == str(message.text) or str(user['username']) == str(message.text):
             isExists = True
             user_id = user['user_id']
-            
+
             break
 
     if not isExists:
@@ -473,7 +516,7 @@ async def admin_panel_role_edit_users_input_user_id_or_username(message: Message
                 [__BACK_IN_MAIN_MENU__]
             ])
         )
-        
+
         await state.clear()
 
         return
@@ -486,7 +529,7 @@ async def admin_panel_role_edit_users_input_user_id_or_username(message: Message
         role_id,
         user_ids,
         role['name'],
-        PM.JSONToClass(message.chat.id, { 'permissions': role['permissions'] })
+        PM.JSONToClass(message.chat.id, {'permissions': role['permissions']})
     )
 
     await message.answer(

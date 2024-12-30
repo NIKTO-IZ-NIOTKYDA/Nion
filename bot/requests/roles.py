@@ -9,10 +9,10 @@ from other.PermissionsManager.PermissionsManager import PM
 
 
 async def GetRole(
-        user_id: int,
-        role_id: int,
-        requests_timeout: int = None
-    ) -> dict[str, str | dict] | errors.ResponseError | httpx.HTTPStatusError:
+            user_id: int,
+            role_id: int,
+            requests_timeout: int = None
+        ) -> dict[str, str | dict] | errors.ResponseError | httpx.HTTPStatusError:
     requester = _wrapped_client.make_requester(requests_timeout)
 
     try:
@@ -33,8 +33,8 @@ async def GetRole(
 
 
 async def GetRoles(user_id: int,
-        requests_timeout: int = None
-    ) -> list[dict[str, str | dict]] | errors.ResponseError | httpx.HTTPStatusError:
+                   requests_timeout: int = None
+                   ) -> list[dict[str, str | dict]] | errors.ResponseError | httpx.HTTPStatusError:
     requester = _wrapped_client.make_requester(requests_timeout)
 
     try:
@@ -52,13 +52,13 @@ async def GetRoles(user_id: int,
 
 
 async def SetRole(
-        user_id: int,
-        role_id: int,
-        user_ids: list[int],
-        name: str,
-        permissions: Permissions,
-        requests_timeout: int = None
-    ) -> dict[str, str | bytes] | errors.ResponseError | httpx.HTTPStatusError:
+            user_id: int,
+            role_id: int,
+            user_ids: list[int],
+            name: str,
+            permissions: Permissions,
+            requests_timeout: int = None
+        ) -> dict[str, str | bytes] | errors.ResponseError | httpx.HTTPStatusError:
     requester = _wrapped_client.make_requester(requests_timeout)
 
     try:
@@ -81,13 +81,13 @@ async def SetRole(
 
 
 async def UpdateRole(
-        user_id: int,
-        role_id: int,
-        user_ids: list[int],
-        name: str,
-        permissions: Permissions,
-        requests_timeout: int = None
-    ) -> dict[str, str | bytes] | errors.ResponseError | httpx.HTTPStatusError:
+            user_id: int,
+            role_id: int,
+            user_ids: list[int],
+            name: str,
+            permissions: Permissions,
+            requests_timeout: int = None
+        ) -> dict[str, str | bytes] | errors.ResponseError | httpx.HTTPStatusError:
     requester = _wrapped_client.make_requester(requests_timeout)
 
     try:
@@ -110,10 +110,10 @@ async def UpdateRole(
 
 
 async def DeleteRole(
-        user_id: int,
-        role_id: int,
-        requests_timeout: int = None
-    ) -> dict[str, str | bytes] | errors.ResponseError | httpx.HTTPStatusError:
+            user_id: int,
+            role_id: int,
+            requests_timeout: int = None
+        ) -> dict[str, str | bytes] | errors.ResponseError | httpx.HTTPStatusError:
     requester = _wrapped_client.make_requester(requests_timeout)
 
     try:

@@ -12,7 +12,8 @@ router = APIRouter(tags=['Users'])
 
 @router.get('/GetUser', summary='Get user')
 async def GetUser(body: Core):
-    if (await utils.CheckUserID(body.UserID, body.UserID)) != None: return await utils.CheckUserID(body.UserID, body.UserID)
+    if (await utils.CheckUserID(body.UserID, body.UserID)) != None:
+        return await utils.CheckUserID(body.UserID, body.UserID)
 
     user: rq.User = await rq.GetUser(body.UserID, body.UserID)
     roles: list[dict[str, str | dict[str, bool]]] = []
@@ -35,13 +36,14 @@ async def GetUser(body: Core):
 
 @router.get('/GetAdmins', summary='Get all users with permission admin')
 async def GetAdmins(body: Core):
-    if (await utils.CheckUserID(body.UserID, body.UserID)) != None: return await utils.CheckUserID(body.UserID, body.UserID)
+    if (await utils.CheckUserID(body.UserID, body.UserID)) != None:
+        return await utils.CheckUserID(body.UserID, body.UserID)
 
     users: list[rq.User] = await rq.GetUsers(body.UserID)
     admins: dict[str, list[dict[str, int | str | None]]] = {
         'admins': []
     }
-    
+
     for user in users:
         for role in user.roles:
             if role.permissions['permissions']['admin']:
@@ -59,7 +61,8 @@ async def GetAdmins(body: Core):
 
 @router.get('/GetUsers', summary='Get users')
 async def GetUsers(body: Core):
-    if (await utils.CheckUserID(body.UserID, body.UserID)) != None: return await utils.CheckUserID(body.UserID, body.UserID)
+    if (await utils.CheckUserID(body.UserID, body.UserID)) != None:
+        return await utils.CheckUserID(body.UserID, body.UserID)
 
     users: list[rq.User] = await rq.GetUsers(body.UserID)
     users_json: list[dict[str, str]] = []
@@ -72,8 +75,8 @@ async def GetUsers(body: Core):
             'last_name': user.last_name,
             'send_notifications': user.send_notifications
         })
-    
-    return JSONResponse(status_code=status.HTTP_200_OK, content={ 'users': users_json })
+
+    return JSONResponse(status_code=status.HTTP_200_OK, content={'users': users_json})
 
 
 @router.post('/SetUser', summary='Set user')
@@ -96,7 +99,6 @@ async def SetUser(body: EditUserBody):
                     'details': 'There is no role with such ID'
                 })
 
-
     await rq.SetUser(
         body.UserID,
         body.username,
@@ -113,7 +115,8 @@ async def SetUser(body: EditUserBody):
 
 @router.post('/UpdateUser', summary='Update user')
 async def UpdateUser(body: EditUserBody):
-    if (await utils.CheckUserID(body.UserID, body.UserID)) != None: return await utils.CheckUserID(body.UserID, body.UserID)
+    if (await utils.CheckUserID(body.UserID, body.UserID)) != None:
+        return await utils.CheckUserID(body.UserID, body.UserID)
 
     for role_id in body.role_ids:
         if not isinstance(await rq.GetRole(body.UserID, role_id), rq.Role):

@@ -7,9 +7,9 @@ from requests.RequestsData import RequestsData as RData
 
 
 async def GetLessons(
-        user_id: int,
-        requests_timeout: int = None
-    ) -> list[dict[str, str | bytes]] | errors.ResponseError | httpx.HTTPStatusError:
+            user_id: int,
+            requests_timeout: int = None
+        ) -> list[dict[str, str | bytes]] | errors.ResponseError | httpx.HTTPStatusError:
     requester = _wrapped_client.make_requester(requests_timeout)
 
     try:
@@ -21,7 +21,8 @@ async def GetLessons(
 
         if response.status_code == httpx.codes.OK:
             response_json = response.json()
-            for lesson in response_json: lesson['photo'] = bytes(lesson['photo']) if lesson['photo'] != None else None
+            for lesson in response_json:
+                lesson['photo'] = bytes(lesson['photo']) if lesson['photo'] != None else None
 
             return response_json
 
@@ -30,10 +31,10 @@ async def GetLessons(
 
 
 async def GetLesson(
-        user_id: int,
-        lesson_id: str,
-        requests_timeout: int = None
-    ) -> dict[str, str | bytes] | errors.ResponseError | httpx.HTTPStatusError:
+            user_id: int,
+            lesson_id: str,
+            requests_timeout: int = None
+        ) -> dict[str, str | bytes] | errors.ResponseError | httpx.HTTPStatusError:
     requester = _wrapped_client.make_requester(requests_timeout)
 
     try:
@@ -41,7 +42,7 @@ async def GetLesson(
             method='GET',
             url='GetLesson',
             json=RData(user_id).data,
-            params={ 'lesson_id': lesson_id }
+            params={'lesson_id': lesson_id}
         ))
 
         if response.status_code == httpx.codes.OK:
@@ -58,13 +59,13 @@ async def GetLesson(
 
 
 async def UpdateLesson(
-        user_id: int,
-        lessons_id: str,
-        homework: str | None = None,
-        photo: bytes | None = None,
-        url: str | None = None,
-        requests_timeout: int = None
-    ) -> None | errors.ResponseError | httpx.HTTPStatusError:
+            user_id: int,
+            lessons_id: str,
+            homework: str | None = None,
+            photo: bytes | None = None,
+            url: str | None = None,
+            requests_timeout: int = None
+        ) -> None | errors.ResponseError | httpx.HTTPStatusError:
     requester = _wrapped_client.make_requester(requests_timeout)
 
     try:

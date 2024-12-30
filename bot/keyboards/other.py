@@ -22,6 +22,7 @@ def GenLesson(lessons: Lessons, appstart_text: str = '', append_text: str = '', 
 
 def CheckCallBackData(input: str, append_callback_data: str) -> bool:
     for lesson in Lessons().lessons:
-        if input == str(lesson[0] + append_callback_data): return True
+        if input == str(lesson[0] + append_callback_data):
+            return True
 
     return False

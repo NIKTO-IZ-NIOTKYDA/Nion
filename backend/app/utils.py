@@ -29,7 +29,7 @@ async def GetPermissions(user_id: int) -> Permissions | Exception:
     log.info(user_id, f'Getting permissions {user_id}')
 
     try:
-        log.debug(user_id, f'Copying DefaultPermissions')
+        log.debug(user_id, 'Copying DefaultPermissions')
         permission = copy(PM.DefaultPermissions)
 
         user = await rq.GetUser(user_id, user_id)
@@ -37,8 +37,8 @@ async def GetPermissions(user_id: int) -> Permissions | Exception:
         for role in user.roles:
             log.debug(user_id, f'Combining {role.name} [{role.role_id}]')
             permission = PM.Combine(user_id, permission,
-                       PM.JSONToClass(user_id, role.permissions)
-                       )
+                                    PM.JSONToClass(user_id, role.permissions)
+                                    )
 
         return permission
     except Exception as Error:

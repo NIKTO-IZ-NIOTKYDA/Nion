@@ -1,5 +1,6 @@
 from handlers.bodies.core import Core
 
+
 class Body(Core):
     lessons_id: str
     homework: str | None

@@ -8,7 +8,6 @@ class PermissionsMetaSchema(Schema):
     class Meta:
         unknown = EXCLUDE
 
-
     def SetAll(self, value: bool) -> None:
         for field_name, field_value in self.__dataclass_fields__.items():
             if isinstance(getattr(self, field_name), bool):
@@ -24,7 +23,6 @@ class Permission(PermissionsMetaSchema):
     value: bool = field(metadata=dict(data_key='value'))
     description: str = field(metadata=dict(data_key='description'))
 
-
     def __bool__(self):
         return self.value
 
@@ -39,7 +37,7 @@ class LessonsEdit(PermissionsMetaSchema):
 @dataclass
 class Lessons(PermissionsMetaSchema):
     use: Permission = field(metadata=dict(data_key='use'))
-    edit: LessonsEdit  = field(metadata=dict(data_key='edit'))
+    edit: LessonsEdit = field(metadata=dict(data_key='edit'))
 
 
 @dataclass

@@ -52,5 +52,5 @@ async def start() -> None:
 if __name__ == 'main':
     loop = asyncio.get_event_loop()
     nest_asyncio.apply(loop)
-    
+
     asyncio.run(start())

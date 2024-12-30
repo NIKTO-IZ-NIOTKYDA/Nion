@@ -7,9 +7,9 @@ from requests.RequestsData import RequestsData as RData
 
 
 async def GetUser(
-        user_id: int,
-        requests_timeout: int = None
-    ) -> dict[str, str | dict] | errors.ResponseError | httpx.HTTPStatusError:
+            user_id: int,
+            requests_timeout: int = None
+        ) -> dict[str, str | dict] | errors.ResponseError | httpx.HTTPStatusError:
     requester = _wrapped_client.make_requester(requests_timeout)
 
     try:
@@ -33,9 +33,9 @@ async def GetUser(
 
 
 async def GetAdmins(
-        user_id: int,
-        requests_timeout: int = None
-    ) -> list[dict[dict, dict]] | errors.ResponseError | httpx.HTTPStatusError:
+            user_id: int,
+            requests_timeout: int = None
+        ) -> list[dict[dict, dict]] | errors.ResponseError | httpx.HTTPStatusError:
     requester = _wrapped_client.make_requester(requests_timeout)
 
     try:
@@ -57,9 +57,9 @@ async def GetAdmins(
 
 
 async def GetUsers(
-        user_id: int,
-        requests_timeout: int = None
-    ) -> dict[str, str | dict] | errors.ResponseError | httpx.HTTPStatusError:
+            user_id: int,
+            requests_timeout: int = None
+        ) -> dict[str, str | dict] | errors.ResponseError | httpx.HTTPStatusError:
     requester = _wrapped_client.make_requester(requests_timeout)
 
     try:
@@ -81,14 +81,14 @@ async def GetUsers(
 
 
 async def SetUser(
-        user_id: int,
-        username: str,
-        first_name: str | None,
-        last_name: str | None,
-        send_notifications: bool,
-        role_ids: list[int],
-        requests_timeout: int = None
-    ) -> None | errors.ResponseError | httpx.HTTPStatusError:
+            user_id: int,
+            username: str,
+            first_name: str | None,
+            last_name: str | None,
+            send_notifications: bool,
+            role_ids: list[int],
+            requests_timeout: int = None
+        ) -> None | errors.ResponseError | httpx.HTTPStatusError:
     requester = _wrapped_client.make_requester(requests_timeout)
 
     try:
@@ -115,14 +115,14 @@ async def SetUser(
 
 
 async def UpdateUser(
-        user_id: int,
-        username: str,
-        first_name: str | None,
-        last_name: str | None,
-        send_notifications: bool,
-        role_ids: list[int],
-        requests_timeout: int = None
-    ) -> None | errors.ResponseError | httpx.HTTPStatusError:
+            user_id: int,
+            username: str,
+            first_name: str | None,
+            last_name: str | None,
+            send_notifications: bool,
+            role_ids: list[int],
+            requests_timeout: int = None
+        ) -> None | errors.ResponseError | httpx.HTTPStatusError:
     requester = _wrapped_client.make_requester(requests_timeout)
 
     try:
