@@ -1,4 +1,3 @@
-import datetime
 from datetime import datetime
 
 from other.config import config
@@ -21,41 +20,41 @@ class logging:
     def init(self, msg: str):
         if config.LOG_LEVEL.value == 0:
             current_time = datetime.now().strftime('%d/%m/%Y %H:%M:%S')
-            print('%-15s %-20s %-15s %-15s %-10s' % (purple+'[INIT]', purple+f'None', blue+f'{current_time}', self.Color+f'[{self.Name}]', normal+f'{msg}'))
-            log_file.write('%-15s %-20s %-15s %-15s %-10s' % (purple+'[INIT]', purple+f'None', blue+f'{current_time}', self.Color+f'[{self.Name}]', normal+f'{msg}\n'))
+            print('%-15s %-20s %-15s %-15s %-10s' % (purple + '[INIT]', purple + 'None', blue + f'{current_time}', self.Color + f'[{self.Name}]', normal + f'{msg}'))
+            log_file.write('%-15s %-20s %-15s %-15s %-10s' % (purple + '[INIT]', purple + 'None', blue + f'{current_time}', self.Color + f'[{self.Name}]', normal + f'{msg}\n'))
             log_file.flush()
 
     def debug(self, user_id: int | str | None, msg: str) -> None:
         if config.LOG_LEVEL.value == 0:
             current_time = datetime.now().strftime('%d/%m/%Y %H:%M:%S')
-            print('%-15s %-20s %-15s %-15s %-10s' % (blue+'[DEBUG]', purple+f'{str(user_id)}', blue+f'{current_time}', self.Color+f'[{self.Name}]', normal+f'{msg}'))
-            log_file.write('%-15s %-20s %-15s %-15s %-10s' % (blue+'[DEBUG]', purple+f'{str(user_id)}', blue+f'{current_time}', self.Color+f'[{self.Name}]', normal+f'{msg}\n'))
+            print('%-15s %-20s %-15s %-15s %-10s' % (blue + '[DEBUG]', purple + f'{str(user_id)}', blue + f'{current_time}', self.Color + f'[{self.Name}]', normal + f'{msg}'))
+            log_file.write('%-15s %-20s %-15s %-15s %-10s' % (blue + '[DEBUG]', purple + f'{str(user_id)}', blue + f'{current_time}', self.Color + f'[{self.Name}]', normal + f'{msg}\n'))
             log_file.flush()
 
     def info(self, user_id: int | str | None, msg: str) -> None:
         if config.LOG_LEVEL.value <= 1:
             current_time = datetime.now().strftime('%d/%m/%Y %H:%M:%S')
-            print('%-15s %-20s %-15s %-15s %-10s' % (green+'[INFO]', purple+f'{str(user_id)}', blue+f'{current_time}', self.Color+f'[{self.Name}]', normal+f'{msg}'))
-            log_file.write('%-15s %-20s %-15s %-15s %-10s' % (green+'[INFO]', purple+f'{str(user_id)}', blue+f'{current_time}', self.Color+f'[{self.Name}]', normal+f'{msg}\n'))
+            print('%-15s %-20s %-15s %-15s %-10s' % (green + '[INFO]', purple + f'{str(user_id)}', blue + f'{current_time}', self.Color + f'[{self.Name}]', normal + f'{msg}'))
+            log_file.write('%-15s %-20s %-15s %-15s %-10s' % (green + '[INFO]', purple + f'{str(user_id)}', blue + f'{current_time}', self.Color + f'[{self.Name}]', normal + f'{msg}\n'))
             log_file.flush()
 
     def warn(self, user_id: int | str | None, msg: str) -> None:
         if config.LOG_LEVEL.value <= 2:
             current_time = datetime.now().strftime('%d/%m/%Y %H:%M:%S')
-            print('%-15s %-20s %-15s %-15s %-10s' % (yellow+'[WARN]', purple+f'{str(user_id)}', blue+f'{current_time}', self.Color+f'[{self.Name}]', normal+f'{msg}'))
-            log_file.write('%-15s %-20s %-15s %-15s %-10s' % (yellow+'[WARN]', purple+f'{str(user_id)}', blue+f'{current_time}', self.Color+f'[{self.Name}]', normal+f'{msg}\n'))
+            print('%-15s %-20s %-15s %-15s %-10s' % (yellow + '[WARN]', purple + f'{str(user_id)}', blue + f'{current_time}', self.Color + f'[{self.Name}]', normal + f'{msg}'))
+            log_file.write('%-15s %-20s %-15s %-15s %-10s' % (yellow + '[WARN]', purple + f'{str(user_id)}', blue + f'{current_time}', self.Color + f'[{self.Name}]', normal + f'{msg}\n'))
             log_file.flush()
 
     def error(self, user_id: int | str | None, msg: str) -> None:
         if config.LOG_LEVEL.value <= 3:
             current_time = datetime.now().strftime('%d/%m/%Y %H:%M:%S')
-            print('%-15s %-20s %-15s %-15s %-10s' % (red+'[ERROR]', purple+f'{str(user_id)}', blue+f'{current_time}', self.Color+f'[{self.Name}]', normal+f'{msg}'))
-            log_file.write('%-15s %-20s %-15s %-15s %-10s' % (red+'[ERROR]', purple+f'{str(user_id)}', blue+f'{current_time}', self.Color+f'[{self.Name}]', normal+f'{msg}\n'))
+            print('%-15s %-20s %-15s %-15s %-10s' % (red + '[ERROR]', purple + f'{str(user_id)}', blue + f'{current_time}', self.Color + f'[{self.Name}]', normal + f'{msg}'))
+            log_file.write('%-15s %-20s %-15s %-15s %-10s' % (red + '[ERROR]', purple + f'{str(user_id)}', blue + f'{current_time}', self.Color + f'[{self.Name}]', normal + f'{msg}\n'))
             log_file.flush()
 
     def cerror(self, user_id: int | str | None, msg: str) -> None:
         if config.LOG_LEVEL.value <= 4:
             current_time = datetime.now().strftime('%d/%m/%Y %H:%M:%S')
-            print('%-15s %-20s %-15s %-15s %-10s' % (red+'[CERROR]', purple+f'{str(user_id)}', blue+f'{current_time}', self.Color+f'[{self.Name}]', normal+f'{msg}'))
-            log_file.write('%-15s %-20s %-15s %-15s %-10s' % (red+'[CERROR]', purple+f'{str(user_id)}', blue+f'{current_time}', self.Color+f'[{self.Name}]', normal+f'{msg}\n'))
+            print('%-15s %-20s %-15s %-15s %-10s' % (red + '[CERROR]', purple + f'{str(user_id)}', blue + f'{current_time}', self.Color + f'[{self.Name}]', normal + f'{msg}'))
+            log_file.write('%-15s %-20s %-15s %-15s %-10s' % (red + '[CERROR]', purple + f'{str(user_id)}', blue + f'{current_time}', self.Color + f'[{self.Name}]', normal + f'{msg}\n'))
             log_file.flush()

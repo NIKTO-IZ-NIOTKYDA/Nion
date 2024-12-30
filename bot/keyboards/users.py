@@ -32,10 +32,11 @@ async def GenStart(user_id: int) -> InlineKeyboardMarkup:
         buttons.append([InlineKeyboardButton(text='Расписание звонков 🕝', callback_data='schedule:recess')])
 
     if (
-        (await utils.GetPermissions(user_id)).admin_panel.use.server_status or
-        (await utils.GetPermissions(user_id)).admin_panel.use.newsletter or
-        (await utils.GetPermissions(user_id)).admin_panel.use.role
-        ): buttons.append([InlineKeyboardButton(text='Админ-панель‼️', callback_data='admin_panel')])
+            (await utils.GetPermissions(user_id)).admin_panel.use.server_status or
+            (await utils.GetPermissions(user_id)).admin_panel.use.newsletter or
+            (await utils.GetPermissions(user_id)).admin_panel.use.role
+            ):
+        buttons.append([InlineKeyboardButton(text='Админ-панель‼️', callback_data='admin_panel')])
 
     buttons.append([InlineKeyboardButton(text='Профиль 👤', callback_data='profile')])
 
@@ -49,12 +50,13 @@ async def GenLesson(user_id: int, lesson_id: str, url: str | None) -> InlineKeyb
         buttons.append([InlineKeyboardButton(text='❌ Удалить ❌', callback_data=f'lesson:delete_warn:{lesson_id}')])
     else:
         buttons.append([InlineKeyboardButton(text='⚠️ Неверные данные ⚠️', callback_data=f'lesson:nftadmins:{lesson_id}')])
-    
-    if url != None: buttons.append([InlineKeyboardButton(text='ГДЗ', url=url)])
-    
+
+    if url != None:
+        buttons.append([InlineKeyboardButton(text='ГДЗ', url=url)])
+
     buttons.append([GenButtonBack('lessons')])
     buttons.append([__BACK_IN_MAIN_MENU__])
-    
+
     return InlineKeyboardMarkup(row_width=1, inline_keyboard=buttons)
 
 
@@ -65,7 +67,7 @@ async def GenSchedule(user_id: int) -> InlineKeyboardMarkup:
         buttons.append([__DELETE_SCHEDULE_WARN__])
     else:
         buttons.append([InlineKeyboardButton(text='⚠️ Расписание не верное или устаревшее ⚠️', callback_data='schedule:nftadmins')])
-    
+
     buttons.append([__BACK_IN_MAIN_MENU__])
 
     return InlineKeyboardMarkup(row_width=1, inline_keyboard=buttons)
@@ -74,8 +76,10 @@ async def GenSchedule(user_id: int) -> InlineKeyboardMarkup:
 async def GenProfile(isSendNotifications: bool) -> InlineKeyboardMarkup:
     buttons: list[list[InlineKeyboardButton]] = []
 
-    if isSendNotifications: buttons.append([InlineKeyboardButton(text='Отключить уведомления', callback_data='profile:notifications:off_warn')])
-    else: buttons.append([InlineKeyboardButton(text='Включить уведомления', callback_data='profile:notifications:on')])
+    if isSendNotifications:
+        buttons.append([InlineKeyboardButton(text='Отключить уведомления', callback_data='profile:notifications:off_warn')])
+    else:
+        buttons.append([InlineKeyboardButton(text='Включить уведомления', callback_data='profile:notifications:on')])
 
     buttons.append([__BACK_IN_MAIN_MENU__])
 

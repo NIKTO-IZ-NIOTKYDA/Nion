@@ -1,6 +1,7 @@
 import other.log.colors as colors
 import other.log.logging as logging
 
+
 class Lessons:
     log: logging.logging = None
 
@@ -35,10 +36,11 @@ class Lessons:
             self.log.init(f'Load lesson {lesson[0]} : \'{lesson[1]}\'')
         self.log.init(f'Loaded {self.number_lessons} lessons')
 
-
     async def GetName(self, id: str) -> str | NameError:
         for id_ in self.lessons:
-            if id == id_[0]: return id_[1]
-            else: continue
-        
+            if id == id_[0]:
+                return id_[1]
+            else:
+                continue
+
         return NameError

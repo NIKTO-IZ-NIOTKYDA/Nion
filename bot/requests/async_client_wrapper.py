@@ -25,11 +25,9 @@ class AsyncClientWrapper:
             default_requests_timeout = config.REQUESTS_TIMEOUT
         self._default_requests_timeout = default_requests_timeout
 
-
     def make_requester(self, requests_timeout: Optional[int]) -> Requester:
         # noinspection PyTypeChecker
         return functools.partial(self.request, requests_timeout)
-
 
     async def request(
             self, requests_timeout: Optional[int], request: httpx.Request,
@@ -47,7 +45,6 @@ class AsyncClientWrapper:
                 ), requests_timeout)
         except asyncio.TimeoutError:
             raise NoResponseFromServer from None
-
 
     async def _infinite_request(self, request: httpx.Request, follow_redirects: bool):
         while True:

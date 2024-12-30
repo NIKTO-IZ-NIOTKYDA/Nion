@@ -23,5 +23,6 @@
     ],
     "workbench.editor.autoLockGroups": {
         "jsProfileVisualizer.cpuprofile.table": true
-    }
+    },
+    "python.languageServer": "Pylance"
 }

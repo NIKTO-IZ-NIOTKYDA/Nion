@@ -13,8 +13,10 @@ router = APIRouter(tags=['Schedule'])
 
 @router.get('/GetSchedule', summary='Get schedule')
 async def GetSchedule(body: Core, request: Request):
-    if (await utils.CheckUserID(body.UserID, body.UserID)) != None: return await utils.CheckUserID(body.UserID, body.UserID)
-    if (await utils.GetPermissions(body.UserID)).schedule.use == False: return await utils.Error403(request, body.UserID)
+    if (await utils.CheckUserID(body.UserID, body.UserID)) != None:
+        return await utils.CheckUserID(body.UserID, body.UserID)
+    if not (await utils.GetPermissions(body.UserID)).schedule.use:
+        return await utils.Error403(request, body.UserID)
 
     schedule = await rq.GetSchedule(body.UserID)
 
@@ -34,16 +36,20 @@ async def GetSchedule(body: Core, request: Request):
 
 @router.get('/GetScheduleCall', summary='Get schedule call')
 async def GetScheduleCall(body: Core, request: Request):
-    if (await utils.CheckUserID(body.UserID, body.UserID)) != None: return await utils.CheckUserID(body.UserID, body.UserID)
-    if (await utils.GetPermissions(body.UserID)).schedule_call.use == False: return await utils.Error403(request, body.UserID)
+    if (await utils.CheckUserID(body.UserID, body.UserID)) != None:
+        return await utils.CheckUserID(body.UserID, body.UserID)
+    if not (await utils.GetPermissions(body.UserID)).schedule_call.use:
+        return await utils.Error403(request, body.UserID)
 
     return JSONResponse(status_code=status.HTTP_200_OK, content={'schedule_call': config.SCHEDULE_CALL})
 
 
 @router.post('/UpdateSchedule', summary='Set lessons')
 async def UpdateSchedule(body: EditScheduleBody, request: Request):
-    if (await utils.CheckUserID(body.UserID, body.UserID)) != None: return await utils.CheckUserID(body.UserID, body.UserID)
-    if (await utils.GetPermissions(body.UserID)).schedule.edit == False: return await utils.Error403(request, body.UserID)
+    if (await utils.CheckUserID(body.UserID, body.UserID)) != None:
+        return await utils.CheckUserID(body.UserID, body.UserID)
+    if not (await utils.GetPermissions(body.UserID)).schedule.edit:
+        return await utils.Error403(request, body.UserID)
 
     await rq.UpdateSchedule(
         body.UserID,

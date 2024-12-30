@@ -3,7 +3,7 @@ from aiogram.types import CallbackQuery, InlineKeyboardMarkup
 
 import utils
 import requests.users as rq_users
-from handlers.core import log, GetRouter
+from handlers.core import GetRouter
 from keyboards.other import GenButtonBack, __BACK_IN_MAIN_MENU__
 from keyboards.users import GenProfile, __OFF__NOTIFICATIONS__
 
@@ -18,13 +18,18 @@ async def profile(callback: CallbackQuery):
     user = await rq_users.GetUser(callback.message.chat.id)
     roles: str = ''
 
-    if user['send_notifications']: notifications_status = '✅'
-    else: notifications_status = '❌'
+    if user['send_notifications']:
+        notifications_status = '✅'
+    else:
+        notifications_status = '❌'
 
-    if (await utils.GetPermissions(callback.message.chat.id)).admin: isAdmin = '✅'
-    else: isAdmin = '❌'
+    if (await utils.GetPermissions(callback.message.chat.id)).admin:
+        isAdmin = '✅'
+    else:
+        isAdmin = '❌'
 
-    for role in user['roles']: roles += f'- {role['name']}\n'
+    for role in user['roles']:
+        roles += f'- {role['name']}\n'
 
     await callback.message.edit_text(f'Имя: {user['first_name']}\nНикнейм : @{user['username']}\nTELEGRAM-ID: <code>{user['user_id']}</code>\n\nУведомления: {notifications_status}\nПрава администратора: {isAdmin}\n\nРоли:\n{roles}',
                                      reply_markup=await GenProfile(user['send_notifications']))

@@ -16,14 +16,13 @@ class LoggingMessageMiddleware(BaseMiddleware):
     def __init__(self) -> None:
         self.logger = logging(Name='MW', Color=purple)
 
-
     async def __call__(
         self,
         handler: Callable[[Message, Dict[str, Any]], Awaitable[Any]],
         event: Message,
         data: Dict[str, Any]
     ) -> Any:
-        
+
         self.logger.info(str(data['event_context'].user.id), f'Received \'{data['event_update'].message.text}\'')
 
         return await handler(event, data)
@@ -33,14 +32,13 @@ class LoggingCallbackQueryMiddleware(BaseMiddleware):
     def __init__(self) -> None:
         self.logger = logging(Name='MW', Color=purple)
 
-
     async def __call__(
         self,
         handler: Callable[[Message, Dict[str, Any]], Awaitable[Any]],
         event: Message,
         data: Dict[str, Any]
     ) -> Any:
-        
+
         self.logger.info(str(data['event_context'].user.id), f'Received [\'{data['event_update'].callback_query.data}\']')
 
         return await handler(event, data)

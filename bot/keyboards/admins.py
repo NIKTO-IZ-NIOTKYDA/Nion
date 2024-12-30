@@ -1,5 +1,4 @@
 from aiogram.types import InlineKeyboardMarkup, InlineKeyboardButton
-from aiogram.types.switch_inline_query_chosen_chat import SwitchInlineQueryChosenChat
 
 import utils
 from other.config import config
@@ -49,10 +48,10 @@ async def GenUpdateMenu(user_id: int) -> InlineKeyboardMarkup:
 
     if (await utils.GetPermissions(user_id)).lessons.edit.homework:
         buttons[0].append(InlineKeyboardButton(text='Д/З', callback_data='update:homework'))
-    
+
     if (await utils.GetPermissions(user_id)).lessons.edit.url:
         buttons[0].append(InlineKeyboardButton(text='ГДЗ', callback_data='update:url'))
-    
+
     buttons.append([__BACK_IN_MAIN_MENU__])
 
     return InlineKeyboardMarkup(row_width=2, inline_keyboard=buttons)
@@ -63,13 +62,13 @@ async def GenAdminPanel(user_id: int) -> InlineKeyboardMarkup:
 
     if (await utils.GetPermissions(user_id)).admin_panel.use.newsletter:
         buttons.append([InlineKeyboardButton(text='Рассылка ✉️', callback_data='admin_panel:newsletter_input')])
-    
+
     if (await utils.GetPermissions(user_id)).admin_panel.use.server_status:
         buttons.append([InlineKeyboardButton(text='Статус сервера 🛠️', callback_data='admin_panel:status_server')])
 
     if (await utils.GetPermissions(user_id)).admin_panel.use.role:
         buttons.append([InlineKeyboardButton(text='Управление ролями ⚙️', callback_data='admin_panel:role')])
-    
+
     buttons.append([__BACK_IN_MAIN_MENU__])
 
     return InlineKeyboardMarkup(row_width=1, inline_keyboard=buttons)
@@ -97,9 +96,8 @@ async def GenRoleMenu(user_id: int) -> InlineKeyboardMarkup:
                 InlineKeyboardButton(text=f'{role['role_id']}', callback_data=f'admin_panel:role:open:{role['role_id']}'),
                 InlineKeyboardButton(text=f'{utils.RemoveHTMLTags(role['name'])}', callback_data=f'admin_panel:role:open:{role['role_id']}')
             ])
-    
-    
-    buttons.append([InlineKeyboardButton(text='➕ Создать новую роль', callback_data=f'admin_panel:role:create')])
+
+    buttons.append([InlineKeyboardButton(text='➕ Создать новую роль', callback_data='admin_panel:role:create')])
     buttons.append([GenButtonBack('admin_panel')])
     buttons.append([__BACK_IN_MAIN_MENU__])
 

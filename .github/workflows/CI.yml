@@ -9,7 +9,7 @@ jobs:
         runs-on: ubuntu-latest
         strategy:
             matrix:
-                python-version: [ 3.12.7 ]
+                python-version: [ 3.13.1 ]
         steps:
             - name: Download repo
               uses: actions/checkout@v2
@@ -26,7 +26,8 @@ jobs:
             - name: Install dependencies
               run: |
                   pip3 install types-psutil flake8
-                  pip3 install -r requirements.txt
+                  pip3 install -r backend/requirements.txt
+                  pip3 install -r bot/requirements.txt
 
             - name: Flake8
               run: |

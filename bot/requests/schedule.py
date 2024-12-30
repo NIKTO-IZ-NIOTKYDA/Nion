@@ -6,9 +6,9 @@ from requests.RequestsData import RequestsData as RData
 
 
 async def GetSchedule(
-        user_id: int,
-        requests_timeout: int = None
-    ) -> dict[str, str | bytes] | FileNotFoundError | httpx.HTTPStatusError:
+            user_id: int,
+            requests_timeout: int = None
+        ) -> dict[str, str | bytes] | FileNotFoundError | httpx.HTTPStatusError:
     requester = _wrapped_client.make_requester(requests_timeout)
 
     try:
@@ -32,10 +32,10 @@ async def GetSchedule(
 
 
 async def UpdateSchedule(
-        user_id: int,
-        file: bytes | None = None,
-        requests_timeout: int = None
-    ) -> list[dict[dict, dict]] | errors.ResponseError | httpx.HTTPStatusError:
+            user_id: int,
+            file: bytes | None = None,
+            requests_timeout: int = None
+        ) -> list[dict[dict, dict]] | errors.ResponseError | httpx.HTTPStatusError:
     requester = _wrapped_client.make_requester(requests_timeout)
 
     try:
@@ -55,9 +55,9 @@ async def UpdateSchedule(
 
 
 async def GetScheduleCall(
-        user_id: int,
-        requests_timeout: int = None
-    ) -> dict[str, str | dict] | FileNotFoundError | httpx.HTTPStatusError:
+            user_id: int,
+            requests_timeout: int = None
+        ) -> dict[str, str | dict] | FileNotFoundError | httpx.HTTPStatusError:
     requester = _wrapped_client.make_requester(requests_timeout)
 
     try:

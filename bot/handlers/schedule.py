@@ -19,19 +19,21 @@ router = GetRouter()
 
 @router.callback_query(F.data == 'schedule')
 async def schedule(callback: CallbackQuery):
-    if not (await utils.GetPermissions(callback.message.chat.id)).schedule.use: 
-        try: await utils.RQReporter(c=callback)
-        except utils.AccessDeniedError: return
+    if not (await utils.GetPermissions(callback.message.chat.id)).schedule.use:
+        try:
+            await utils.RQReporter(c=callback)
+        except utils.AccessDeniedError:
+            return
 
     schedule = await rq_schedule.GetSchedule(callback.message.chat.id)
 
     if schedule == FileNotFoundError:
         log.info(user_id=str(callback.message.chat.id), msg='Schedule not found!')
-    
+
         await callback.answer(text='‼️ ERROR: FILE NOT FOUND ‼️', show_alert=True)
 
         await utils.NotificationAdmins(text='Расписание не найдено.\nПожалуйста добавьте расписание !', bot=callback.bot,
-            reply_markup=InlineKeyboardMarkup(row_width=1, inline_keyboard=[[__BACK_IN_MAIN_MENU__]]))
+                                       reply_markup=InlineKeyboardMarkup(row_width=1, inline_keyboard=[[__BACK_IN_MAIN_MENU__]]))
     else:
         await callback.bot.send_chat_action(callback.message.chat.id, action='upload_photo')
         await callback.bot.send_photo(
@@ -43,7 +45,8 @@ async def schedule(callback: CallbackQuery):
 
 @router.message(F.photo)
 async def schedule_add_from_photo(message: Message, state: FSMContext) -> None:
-    if not (await utils.GetPermissions(message.chat.id)).schedule.edit: await utils.RQReporter(m=message)
+    if not (await utils.GetPermissions(message.chat.id)).schedule.edit:
+        await utils.RQReporter(m=message)
 
     file = await message.bot.get_file(message.photo[-1].file_id)
     downloaded_file = await message.bot.download_file(file.file_path)
@@ -66,16 +69,17 @@ async def schedule_add_from_photo(message: Message, state: FSMContext) -> None:
 
 @router.message(F.document)
 async def schedule_add_from_file(message: Message, state: FSMContext) -> None:
-    if not (await utils.GetPermissions(message.chat.id)).schedule.edit: await utils.RQReporter(m=message)
+    if not (await utils.GetPermissions(message.chat.id)).schedule.edit:
+        await utils.RQReporter(m=message)
 
     if not message.document.thumbnail.file_size * 0.000001 <= 1:
         await message.answer('❌ Файл слишком большой! Максимальный размер 1Mb!',
-                                reply_markup=InlineKeyboardMarkup(inline_keyboard=[[__BACK_IN_MAIN_MENU__]]))
+                             reply_markup=InlineKeyboardMarkup(inline_keyboard=[[__BACK_IN_MAIN_MENU__]]))
         return
 
     if message.document.mime_type != 'image/jpeg' and message.document.mime_type != 'image/png':
         await message.answer('❌ Неподдерживаемый формат! Отправляйте фото в формате jpeg / jpg / png',
-                                reply_markup=InlineKeyboardMarkup(inline_keyboard=[[__BACK_IN_MAIN_MENU__]]))
+                             reply_markup=InlineKeyboardMarkup(inline_keyboard=[[__BACK_IN_MAIN_MENU__]]))
         return
 
     file = await message.bot.get_file(message.document.file_id)
@@ -85,12 +89,11 @@ async def schedule_add_from_file(message: Message, state: FSMContext) -> None:
         await message.answer('👇 Выберете предмет по которому хотите заменить Д/З', reply_markup=__UPDATE_HOMEWORK_AND_PHOTO__)
         await state.set_state(FormUpdate.select_lesson)
 
-
         await state.set_data({
             'homework': message.caption,
             'file': downloaded_file.read()
             })
-        
+
         downloaded_file.close()
     else:
         await rq_schedule.UpdateSchedule(message.chat.id, downloaded_file.read())
@@ -101,9 +104,11 @@ async def schedule_add_from_file(message: Message, state: FSMContext) -> None:
 
 @router.callback_query(F.data.startswith('schedule:recess'))
 async def schedule_recess(callback: CallbackQuery):
-    if not (await utils.GetPermissions(callback.message.chat.id)).schedule_call.use: 
-        try: await utils.RQReporter(c=callback)
-        except utils.AccessDeniedError: return
+    if not (await utils.GetPermissions(callback.message.chat.id)).schedule_call.use:
+        try:
+            await utils.RQReporter(c=callback)
+        except utils.AccessDeniedError:
+            return
 
     lessons: list[dict[str, str]] = await rq_schedule.GetScheduleCall(callback.message.chat.id)
 
@@ -123,19 +128,24 @@ async def schedule_recess(callback: CallbackQuery):
         await callback.message.edit_text(f'{text}\n\nБольше уроков на сегодня нет.',
                                          reply_markup=InlineKeyboardMarkup(inline_keyboard=[[__BACK_IN_MAIN_MENU__]]))
     else:
-        if status == 0: status_text = 'урока'
-        elif status == 1: status_text = 'перемены'
-        else: status_text = 'ERROR'
+        if status == 0:
+            status_text = 'урока'
+        elif status == 1:
+            status_text = 'перемены'
+        else:
+            status_text = 'ERROR'
 
-        await callback.message.edit_text(f'{text}\n\nДо конца {status_text} осталось {time_to_end:.0f} минут', 
-                                        reply_markup=InlineKeyboardMarkup(inline_keyboard=[[__BACK_IN_MAIN_MENU__]]))
+        await callback.message.edit_text(f'{text}\n\nДо конца {status_text} осталось {time_to_end:.0f} минут',
+                                         reply_markup=InlineKeyboardMarkup(inline_keyboard=[[__BACK_IN_MAIN_MENU__]]))
 
 
 @router.callback_query(F.data.startswith('schedule:nftadmins'))
 async def schedule_nftadmins(callback: CallbackQuery) -> None:
-    if not (await utils.GetPermissions(callback.message.chat.id)).schedule.use: 
-        try: await utils.RQReporter(c=callback)
-        except utils.AccessDeniedError: return
+    if not (await utils.GetPermissions(callback.message.chat.id)).schedule.use:
+        try:
+            await utils.RQReporter(c=callback)
+        except utils.AccessDeniedError:
+            return
 
     await utils.NotificationAdmins(
         f'⚠️ Пользователь: @{callback.from_user.username} [{callback.message.chat.id}] уведомил вас в неактуальности расписания',
@@ -144,25 +154,28 @@ async def schedule_nftadmins(callback: CallbackQuery) -> None:
     )
 
     await callback.message.answer('✅ Отчёт отправлен. Извините за неудобства.',
-                        reply_markup=InlineKeyboardMarkup(inline_keyboard=[[__BACK_IN_MAIN_MENU__]]))
+                                  reply_markup=InlineKeyboardMarkup(inline_keyboard=[[__BACK_IN_MAIN_MENU__]]))
 
 
 @router.callback_query(F.data.startswith('schedule:delete_warn'))
 async def schedule_delete_warn(callback: CallbackQuery) -> None:
-    
-    if not (await utils.GetPermissions(callback.message.chat.id)).schedule.edit: 
-        try: await utils.RQReporter(c=callback)
-        except utils.AccessDeniedError: return
+
+    if not (await utils.GetPermissions(callback.message.chat.id)).schedule.edit:
+        try:
+            await utils.RQReporter(c=callback)
+        except utils.AccessDeniedError:
+            return
 
     await callback.message.answer(text='⚠ Вы уверены ?', reply_markup=__DELETE_SCHEDULE__)
 
 
 @router.callback_query(F.data.startswith('schedule:delete'))
 async def schedule_delete(callback: CallbackQuery) -> None:
-    if not (await utils.GetPermissions(callback.message.chat.id)).schedule.edit: 
-        try: await utils.RQReporter(c=callback)
-        except utils.AccessDeniedError: return
-
+    if not (await utils.GetPermissions(callback.message.chat.id)).schedule.edit:
+        try:
+            await utils.RQReporter(c=callback)
+        except utils.AccessDeniedError:
+            return
 
     if (await rq_schedule.GetSchedule(callback.message.chat.id)) == FileNotFoundError:
         await callback.answer(text='Ошибка: файл не найден.', show_alert=True)

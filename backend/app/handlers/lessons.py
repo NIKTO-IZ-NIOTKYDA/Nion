@@ -13,8 +13,10 @@ router = APIRouter(tags=['Lessons'])
 
 @router.get('/GetLessons', summary='Get lessons')
 async def GetLessons(body: Core, request: Request):
-    if (await utils.CheckUserID(body.UserID, body.UserID)) != None: return await utils.CheckUserID(body.UserID, body.UserID)
-    if (await utils.GetPermissions(body.UserID)).lessons.use == False: return await utils.Error403(request, body.UserID)
+    if (await utils.CheckUserID(body.UserID, body.UserID)) != None:
+        return await utils.CheckUserID(body.UserID, body.UserID)
+    if not (await utils.GetPermissions(body.UserID)).lessons.use:
+        return await utils.Error403(request, body.UserID)
 
     data_lessons: list[Lesson] = await rq.GetLessons(body.UserID)
     lessons: list[dict[str | None, bytes | None]] = []
@@ -33,8 +35,10 @@ async def GetLessons(body: Core, request: Request):
 
 @router.get('/GetLesson', summary='Get lesson')
 async def GetLesson(lesson_id: str, body: Core, request: Request):
-    if (await utils.CheckUserID(body.UserID, body.UserID)) != None: return await utils.CheckUserID(body.UserID, body.UserID)
-    if (await utils.GetPermissions(body.UserID)).lessons.use == False: return await utils.Error403(request, body.UserID)
+    if (await utils.CheckUserID(body.UserID, body.UserID)) != None:
+        return await utils.CheckUserID(body.UserID, body.UserID)
+    if not (await utils.GetPermissions(body.UserID)).lessons.use:
+        return await utils.Error403(request, body.UserID)
 
     lesson_name = (await (await utils.GetLessons()).GetName(lesson_id))
     if lesson_name == NameError:
@@ -56,10 +60,14 @@ async def GetLesson(lesson_id: str, body: Core, request: Request):
 
 @router.post('/UpdateLesson', summary='Update lessons')
 async def SetLesson(body: EditLessonsBody, request: Request):
-    if (await utils.CheckUserID(body.UserID, body.UserID)) != None: return await utils.CheckUserID(body.UserID, body.UserID)
-    if (await utils.GetPermissions(body.UserID)).lessons.edit.homework == False: return await utils.Error403(request, body.UserID)
-    elif (await utils.GetPermissions(body.UserID)).lessons.edit.photo == False: return await utils.Error403(request, body.UserID)
-    elif (await utils.GetPermissions(body.UserID)).lessons.edit.url == False: return await utils.Error403(request, body.UserID)
+    if (await utils.CheckUserID(body.UserID, body.UserID)) != None:
+        return await utils.CheckUserID(body.UserID, body.UserID)
+    if not (await utils.GetPermissions(body.UserID)).lessons.edit.homework:
+        return await utils.Error403(request, body.UserID)
+    elif not (await utils.GetPermissions(body.UserID)).lessons.edit.photo:
+        return await utils.Error403(request, body.UserID)
+    elif not (await utils.GetPermissions(body.UserID)).lessons.edit.url:
+        return await utils.Error403(request, body.UserID)
 
     await rq.UpdateLesson(
         body.UserID,
