@@ -55,7 +55,7 @@ jobs:
           context: ./backend/
           tags: |
             ghcr.io/${{ env.REPOSITORY_OWNER_LOWERCASE }}/backend:latest
-            ghcr.io/${{ env.REPOSITORY_OWNER_LOWERCASE }}/backend:${{ github.event.workflow_run.event.after }}
+            ghcr.io/${{ env.REPOSITORY_OWNER_LOWERCASE }}/backend:${{ github.event.workflow_run.head_commit.id }}
 
       - name: "Build and push Docker image [BOT]"
         uses: docker/build-push-action@v6.10.0
@@ -64,4 +64,4 @@ jobs:
           context: ./bot/
           tags: |
             ghcr.io/${{ env.REPOSITORY_OWNER_LOWERCASE }}/bot:latest
-            ghcr.io/${{ env.REPOSITORY_OWNER_LOWERCASE }}/bot:${{ github.event.workflow_run.event.after }}
+            ghcr.io/${{ env.REPOSITORY_OWNER_LOWERCASE }}/bot:${{ github.event.workflow_run.head_commit.id }}
