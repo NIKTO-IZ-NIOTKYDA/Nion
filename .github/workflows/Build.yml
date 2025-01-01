@@ -9,6 +9,7 @@ on:
   push:
       branches:
         - master
+        - develop
 
   pull_request:
       branches:
@@ -17,6 +18,7 @@ on:
 env:
   REGISTRY: ghcr.io
   IMAGE_NAME: ${{ github.repository }}
+  REPOSITORY_OWNER_LOWERCASE: nikto-iz-niotkyda
 
 jobs:
   build:
@@ -58,8 +60,8 @@ jobs:
           push: true
           context: ./backend/
           tags: |
-            ghcr.io/${{ github.repository_owner }}/nion-backend:latest
-            ghcr.io/${{ github.repository_owner }}/nion-backend:${{ github.event.after }}
+            ghcr.io/${{ env.REPOSITORY_OWNER_LOWERCASE }}/nion-backend:latest
+            ghcr.io/${{ env.REPOSITORY_OWNER_LOWERCASE }}/nion-backend:${{ github.event.after }}
 
       - name: "Build and push Docker image [BOT]"
         uses: docker/build-push-action@v6
@@ -67,5 +69,5 @@ jobs:
           push: true
           context: ./bot/
           tags: |
-            ghcr.io/${{ github.repository_owner }}/nion-bot:latest
-            ghcr.io/${{ github.repository_owner }}/nion-bot:${{ github.event.after }}
+            ghcr.io/${{ env.REPOSITORY_OWNER_LOWERCASE }}/nion-bot:latest
+            ghcr.io/${{ env.REPOSITORY_OWNER_LOWERCASE }}/nion-bot:${{ github.event.after }}
