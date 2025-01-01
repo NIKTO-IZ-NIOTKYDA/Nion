@@ -49,8 +49,7 @@ services:
     container_name: ${BACKEND_CONTAINER_NAME}
     env_file:
       - .env
-    build:
-      context: ./backend
+    image: ghcr.io/nikto-iz-niotkyda/backend:latest
     depends_on:
       - database
     deploy:
@@ -61,19 +60,17 @@ services:
     volumes:
       - /etc/localtime:/etc/localtime:ro
       - ./other:/src/other
-    restart: unless-stopped
+    restart: always
     expose:
       - ${BACKEND_PORT}:${BACKEND_PORT}
     networks:
       - nion
-    tty: true
 
   bot:
     container_name: ${BOT_CONTAINER_NAME}
     env_file:
       - .env
-    build:
-      context: ./bot
+    image: ghcr.io/nikto-iz-niotkyda/bot:latest
     depends_on:
       - database
       - backend
@@ -85,7 +82,7 @@ services:
     volumes:
       - /etc/localtime:/etc/localtime:ro
       - ./other:/src/other
-    restart: unless-stopped
+    restart: always
     networks:
       - nion
 
