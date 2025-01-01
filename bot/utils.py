@@ -134,11 +134,11 @@ async def GetPermissions(user_id: int) -> Permissions | Exception:
 
 
 async def RQReporter(c: CallbackQuery = None, m: Message = None) -> AccessDeniedError:
-    if c != None:
+    if c is not None:
         await c.answer(f'❌ Запрос не удался!\n\nLOG:\ncallback.data: \'{c.data}\'', show_alert=True)
         raise AccessDeniedError
 
-    if m != None:
+    if m is not None:
         await m.answer('❌ Запрос не удался!', reply_markup=InlineKeyboardMarkup(inline_keyboard=[[__BACK_IN_MAIN_MENU__]]))
         raise AccessDeniedError
 

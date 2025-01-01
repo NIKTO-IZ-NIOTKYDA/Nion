@@ -42,10 +42,10 @@ async def lesson_show(callback: CallbackQuery, state: FSMContext):
     calldata = callback.data.replace('lesson:show:', '')
     lesson = await rq_lessons.GetLesson(callback.message.chat.id, calldata)
     markup = await GenLesson(callback.message.chat.id, calldata, lesson['url'])
-    homework = lesson['homework'] if lesson['homework'] != None else config.NO_FOUND_HOMEWORK_MSG
+    homework = lesson['homework'] if lesson['homework'] is not None else config.NO_FOUND_HOMEWORK_MSG
 
     # Photo
-    if lesson['photo'] != None:
+    if lesson['photo'] is not None:
         photo = BufferedInputFile(file=lesson['photo'], filename='image.png')
         await callback.bot.send_photo(
                 chat_id=callback.message.chat.id,

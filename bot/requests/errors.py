@@ -7,8 +7,8 @@ class NoResponseFromServer(BackendAPIError):
 
 
 class ResponseError(BackendAPIError):
-    status: str = None
-    details: str = None
+    status: str | None = None
+    details: str | None = None
 
     def __init__(self, response_json: dict) -> None:
         super().__init__()

@@ -43,7 +43,7 @@ async def UpdateSchedule(
             method='POST',
             url='UpdateSchedule',
             json=RData(user_id, {
-                'file': list(file) if file != None else None
+                'file': list(file) if file is not None else None
             }).data,
         ))
 

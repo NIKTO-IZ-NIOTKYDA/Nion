@@ -22,7 +22,7 @@ async def GetLessons(
         if response.status_code == httpx.codes.OK:
             response_json = response.json()
             for lesson in response_json:
-                lesson['photo'] = bytes(lesson['photo']) if lesson['photo'] != None else None
+                lesson['photo'] = bytes(lesson['photo']) if lesson['photo'] is not None else None
 
             return response_json
 
@@ -47,7 +47,7 @@ async def GetLesson(
 
         if response.status_code == httpx.codes.OK:
             response_json = response.json()
-            response_json['photo'] = bytes(response_json['photo']) if response_json['photo'] != None else None
+            response_json['photo'] = bytes(response_json['photo']) if response_json['photo'] is not None else None
 
             return response_json
 
@@ -75,7 +75,7 @@ async def UpdateLesson(
             json=RData(user_id, args={
                 'lessons_id': lessons_id,
                 'homework': homework,
-                'photo': list(photo) if photo != None else None,
+                'photo': list(photo) if photo is not None else None,
                 'url': url
             }).data
         ))

@@ -13,7 +13,7 @@ router = APIRouter(tags=['Lessons'])
 
 @router.get('/GetLessons', summary='Get lessons')
 async def GetLessons(body: Core, request: Request):
-    if (await utils.CheckUserID(body.UserID, body.UserID)) != None:
+    if (await utils.CheckUserID(body.UserID, body.UserID)) is not None:
         return await utils.CheckUserID(body.UserID, body.UserID)
     if not (await utils.GetPermissions(body.UserID)).lessons.use:
         return await utils.Error403(request, body.UserID)
@@ -26,7 +26,7 @@ async def GetLessons(body: Core, request: Request):
             'lesson_id': lesson.lesson_id,
             'lesson_name': await (await utils.GetLessons()).GetName(lesson.lesson_id),
             'homework': lesson.homework,
-            'photo': list(lesson.photo) if lesson.photo != None else None,
+            'photo': list(lesson.photo) if lesson.photo is not None else None,
             'url': lesson.url
         })
 
@@ -34,8 +34,8 @@ async def GetLessons(body: Core, request: Request):
 
 
 @router.get('/GetLesson', summary='Get lesson')
-async def GetLesson(lesson_id: str, body: Core, request: Request):
-    if (await utils.CheckUserID(body.UserID, body.UserID)) != None:
+async def GetLesson(lesson_id: str, body: Core, request: Request) -> JSONResponse:
+    if (await utils.CheckUserID(body.UserID, body.UserID)) is not None:
         return await utils.CheckUserID(body.UserID, body.UserID)
     if not (await utils.GetPermissions(body.UserID)).lessons.use:
         return await utils.Error403(request, body.UserID)
@@ -46,21 +46,20 @@ async def GetLesson(lesson_id: str, body: Core, request: Request):
             'status': 'fail',
             'details': f'Lessons \'{lesson_id}\' not found'
         })
-
-    data_lesson: Lesson = await rq.GetLesson(body.UserID, lesson_id)
-    if isinstance(data_lesson, Lesson):
+    else:
+        data_lesson: Lesson = await rq.GetLesson(body.UserID, lesson_id)
         return JSONResponse(status_code=status.HTTP_200_OK, content={
             'lesson_id': data_lesson.lesson_id,
             'lesson_name': lesson_name,
             'homework': data_lesson.homework,
-            'photo': list(data_lesson.photo) if data_lesson.photo != None else None,
+            'photo': list(data_lesson.photo) if data_lesson.photo is not None else None,
             'url': data_lesson.url
         })
 
 
 @router.post('/UpdateLesson', summary='Update lessons')
-async def SetLesson(body: EditLessonsBody, request: Request):
-    if (await utils.CheckUserID(body.UserID, body.UserID)) != None:
+async def SetLesson(body: EditLessonsBody, request: Request) -> JSONResponse:
+    if (await utils.CheckUserID(body.UserID, body.UserID)) is not None:
         return await utils.CheckUserID(body.UserID, body.UserID)
     if not (await utils.GetPermissions(body.UserID)).lessons.edit.homework:
         return await utils.Error403(request, body.UserID)
@@ -73,7 +72,7 @@ async def SetLesson(body: EditLessonsBody, request: Request):
         body.UserID,
         body.lessons_id,
         body.homework,
-        bytes(body.photo) if body.photo != None else None,
+        bytes(body.photo) if body.photo is not None else None,
         body.url
     )
 

@@ -8,8 +8,8 @@ class PermissionsMetaSchema(Schema):
     class Meta:
         unknown = EXCLUDE
 
-    def SetAll(self, value: bool) -> None:
-        for field_name, field_value in self.__dataclass_fields__.items():
+    def SetAll(self, value: bool) -> "PermissionsMetaSchema":
+        for field_name, field_value in self.__dataclass_fields__.items():   # type: ignore [attr-defined]
             if isinstance(getattr(self, field_name), bool):
                 setattr(self, field_name, value)
             elif hasattr(getattr(self, field_name), '__dataclass_fields__'):

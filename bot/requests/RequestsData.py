@@ -1,5 +1,5 @@
 class RequestsData:
-    data: dict = None
+    data: dict | None = None
 
     def __init__(self, UserID: int, args: dict = {}):
         self.data = {
