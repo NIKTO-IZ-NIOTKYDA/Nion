@@ -6,15 +6,6 @@ on:
     types:
       - completed
 
-  push:
-      branches:
-        - master
-        - develop
-
-  pull_request:
-      branches:
-        - master
-
 env:
   REGISTRY: ghcr.io
   IMAGE_NAME: ${{ github.repository }}
@@ -23,6 +14,7 @@ env:
 jobs:
   build:
     name: 'Build & Publish'
+    if: ${{ github.event.workflow_run.conclusion == 'success' && (github.event_name == 'push' && github.ref == 'refs/heads/master' || github.event_name == 'pull_request' && github.head_ref == 'master') }}
     runs-on: ubuntu-latest
 
     permissions:
@@ -60,8 +52,8 @@ jobs:
           push: true
           context: ./backend/
           tags: |
-            ghcr.io/${{ env.REPOSITORY_OWNER_LOWERCASE }}/nion-backend:latest
-            ghcr.io/${{ env.REPOSITORY_OWNER_LOWERCASE }}/nion-backend:${{ github.event.after }}
+            ghcr.io/${{ env.REPOSITORY_OWNER_LOWERCASE }}/backend:latest
+            ghcr.io/${{ env.REPOSITORY_OWNER_LOWERCASE }}/backend:${{ github.event.after }}
 
       - name: "Build and push Docker image [BOT]"
         uses: docker/build-push-action@v6
@@ -69,5 +61,5 @@ jobs:
           push: true
           context: ./bot/
           tags: |
-            ghcr.io/${{ env.REPOSITORY_OWNER_LOWERCASE }}/nion-bot:latest
-            ghcr.io/${{ env.REPOSITORY_OWNER_LOWERCASE }}/nion-bot:${{ github.event.after }}
+            ghcr.io/${{ env.REPOSITORY_OWNER_LOWERCASE }}/bot:latest
+            ghcr.io/${{ env.REPOSITORY_OWNER_LOWERCASE }}/bot:${{ github.event.after }}
