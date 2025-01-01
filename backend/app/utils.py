@@ -45,7 +45,7 @@ async def GetPermissions(user_id: int) -> Permissions | Exception:
         log.error(user_id, f'{Error}')
 
 
-async def Error403(request: Request, user_id: int | str | None = None):
+async def Error403(request: Request, user_id: int | str | None = None) -> JSONResponse:
     return JSONResponse(status_code=status.HTTP_403_FORBIDDEN, content=f'Not right enough to access: {request.base_url} | UserID: {user_id}')
 
 

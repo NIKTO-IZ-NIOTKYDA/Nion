@@ -60,9 +60,6 @@ class CONFIG(BaseSettings):
     POSTGRES_DB: str
     POSTGRES_URL: str
     NO_FOUND_HOMEWORK_MSG: str
-    SECRET_KEY: str
-    ALGORITHM: str
-    SALT512: bytes
 
     # Other
     PROJECT_NAME: str

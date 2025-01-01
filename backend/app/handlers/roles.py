@@ -13,7 +13,7 @@ router = APIRouter(tags=['Roles'])
 
 @router.get('/GetRole', summary='Get role')
 async def GetRole(RoleID: int, body: Core, request: Request):
-    if (await utils.CheckUserID(body.UserID, body.UserID)) != None:
+    if (await utils.CheckUserID(body.UserID, body.UserID)) is not None:
         return await utils.CheckUserID(body.UserID, body.UserID)
     if not (await utils.GetPermissions(body.UserID)).admin_panel.use.role:
         return await utils.Error403(request, body.UserID)
@@ -46,7 +46,7 @@ async def GetRole(RoleID: int, body: Core, request: Request):
 
 @router.get('/GetRoles', summary='Get roles')
 async def GetRoles(body: Core, request: Request):
-    if (await utils.CheckUserID(body.UserID, body.UserID)) != None:
+    if (await utils.CheckUserID(body.UserID, body.UserID)) is not None:
         return await utils.CheckUserID(body.UserID, body.UserID)
     if not (await utils.GetPermissions(body.UserID)).admin_panel.use.role:
         return await utils.Error403(request, body.UserID)
@@ -65,7 +65,7 @@ async def GetRoles(body: Core, request: Request):
 
 @router.post('/SetRole', summary='Set role')
 async def SetRole(body: EditRoleBody, request: Request):
-    if (await utils.CheckUserID(body.UserID, body.UserID)) != None:
+    if (await utils.CheckUserID(body.UserID, body.UserID)) is not None:
         return await utils.CheckUserID(body.UserID, body.UserID)
     if not (await utils.GetPermissions(body.UserID)).admin_panel.use.role:
         return await utils.Error403(request, body.UserID)
@@ -108,7 +108,7 @@ async def SetRole(body: EditRoleBody, request: Request):
 
 @router.post('/UpdateRole', summary='Update role')
 async def UpdateRole(body: EditRoleBody, request: Request):
-    if (await utils.CheckUserID(body.UserID, body.UserID)) != None:
+    if (await utils.CheckUserID(body.UserID, body.UserID)) is not None:
         return await utils.CheckUserID(body.UserID, body.UserID)
     if not (await utils.GetPermissions(body.UserID)).admin_panel.use.role:
         return await utils.Error403(request, body.UserID)
@@ -151,7 +151,7 @@ async def UpdateRole(body: EditRoleBody, request: Request):
 
 @router.delete('/DeleteRole', summary='Delete role')
 async def DeleteRole(RoleID: int, body: Core, request: Request):
-    if (await utils.CheckUserID(body.UserID, body.UserID)) != None:
+    if (await utils.CheckUserID(body.UserID, body.UserID)) is not None:
         return await utils.CheckUserID(body.UserID, body.UserID)
     if not (await utils.GetPermissions(body.UserID)).admin_panel.use.role:
         return await utils.Error403(request, body.UserID)

@@ -191,7 +191,7 @@ async def GetUser(user_id: int, rq_user_id: int) -> User | AttributeError | Exce
         try:
             user = await session.scalar(select(User).where(User.user_id == rq_user_id))
 
-            if user == None:
+            if user is None:
                 log.warn(user_id, f'User \'{rq_user_id}\' not found!')
                 return AttributeError
             else:
@@ -221,7 +221,7 @@ async def GetRole(user_id: int, role_id: int) -> Role | AttributeError | Excepti
         try:
             role = await session.scalar(select(Role).where(Role.role_id == role_id))
 
-            if role == None:
+            if role is None:
                 log.warn(user_id, f'Role \'{role_id}\' not found!')
                 return AttributeError
             else:
@@ -283,7 +283,7 @@ async def GetSchedule(user_id: int) -> Schedule | FileNotFoundError | Exception:
         try:
             schedule = await session.scalar(select(Schedule).where(Schedule.id == 1))
 
-            if schedule == None or schedule.file == None:
+            if schedule is None or schedule.file is None:
                 log.warn(user_id, 'Schedule not found!')
                 return FileNotFoundError
             else:
@@ -332,7 +332,7 @@ async def UpdateUser(user_id: int, username: str, first_name: str, last_name: st
         try:
             user = await session.scalar(select(User).where(User.user_id == user_id))
 
-            if user == None:
+            if user is None:
                 log.error(user_id, f'USER: {user_id} NOT FOUNT')
                 return IndexError
 
@@ -361,7 +361,7 @@ async def UpdateSchedule(user_id: int, photo: bytes | None) -> None | Indentatio
         try:
             schedule = await session.scalar(select(Schedule).where(Schedule.id == 1))
 
-            if schedule == None:
+            if schedule is None:
                 log.error(user_id, 'SCHEDULE NOT FOUNT')
 
                 session.add(Schedule(
@@ -392,7 +392,7 @@ async def UpdateRole(user_id, role_id: int, user_ids: list[int], name: str, perm
         try:
             role = await session.scalar(select(Role).where(Role.role_id == role_id))
 
-            if role == None:
+            if role is None:
                 log.error(user_id, 'ROLE NOT FOUNT')
                 return NotFoundErr
 

@@ -12,7 +12,7 @@ router = APIRouter(tags=['Users'])
 
 @router.get('/GetUser', summary='Get user')
 async def GetUser(body: Core):
-    if (await utils.CheckUserID(body.UserID, body.UserID)) != None:
+    if (await utils.CheckUserID(body.UserID, body.UserID)) is not None:
         return await utils.CheckUserID(body.UserID, body.UserID)
 
     user: rq.User = await rq.GetUser(body.UserID, body.UserID)
@@ -36,7 +36,7 @@ async def GetUser(body: Core):
 
 @router.get('/GetAdmins', summary='Get all users with permission admin')
 async def GetAdmins(body: Core):
-    if (await utils.CheckUserID(body.UserID, body.UserID)) != None:
+    if (await utils.CheckUserID(body.UserID, body.UserID)) is not None:
         return await utils.CheckUserID(body.UserID, body.UserID)
 
     users: list[rq.User] = await rq.GetUsers(body.UserID)
@@ -61,7 +61,7 @@ async def GetAdmins(body: Core):
 
 @router.get('/GetUsers', summary='Get users')
 async def GetUsers(body: Core):
-    if (await utils.CheckUserID(body.UserID, body.UserID)) != None:
+    if (await utils.CheckUserID(body.UserID, body.UserID)) is not None:
         return await utils.CheckUserID(body.UserID, body.UserID)
 
     users: list[rq.User] = await rq.GetUsers(body.UserID)
@@ -115,7 +115,7 @@ async def SetUser(body: EditUserBody):
 
 @router.post('/UpdateUser', summary='Update user')
 async def UpdateUser(body: EditUserBody):
-    if (await utils.CheckUserID(body.UserID, body.UserID)) != None:
+    if (await utils.CheckUserID(body.UserID, body.UserID)) is not None:
         return await utils.CheckUserID(body.UserID, body.UserID)
 
     for role_id in body.role_ids:

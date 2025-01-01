@@ -51,7 +51,7 @@ async def schedule_add_from_photo(message: Message, state: FSMContext) -> None:
     file = await message.bot.get_file(message.photo[-1].file_id)
     downloaded_file = await message.bot.download_file(file.file_path)
 
-    if message.caption != None:
+    if message.caption is not None:
         await message.answer('👇 Выберете предмет по которому хотите заменить Д/З', reply_markup=__UPDATE_HOMEWORK_AND_PHOTO__)
         await state.set_state(FormUpdate.select_lesson)
 
@@ -85,7 +85,7 @@ async def schedule_add_from_file(message: Message, state: FSMContext) -> None:
     file = await message.bot.get_file(message.document.file_id)
     downloaded_file = await message.bot.download_file(file.file_path)
 
-    if message.caption != None:
+    if message.caption is not None:
         await message.answer('👇 Выберете предмет по которому хотите заменить Д/З', reply_markup=__UPDATE_HOMEWORK_AND_PHOTO__)
         await state.set_state(FormUpdate.select_lesson)
 

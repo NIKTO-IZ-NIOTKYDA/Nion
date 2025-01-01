@@ -1,0 +1,36 @@
+name: Lint
+
+on:
+  pull_request:
+    branches: [ master ]
+  
+  push:
+
+jobs:
+    Lint:
+        runs-on: ubuntu-latest
+        strategy:
+            matrix:
+                python-version: [ 3.13.1 ]
+        steps:
+            - name: Download repo
+              uses: actions/checkout@v2
+
+            - name: Setup Python ${{ matrix.python-version }}
+              uses: actions/setup-python@v2
+              with:
+                python-version: ${{ matrix.python-version }}
+
+            - name: Upgrade pip
+              run: |
+                  python3 -m pip install --upgrade pip
+
+            - name: Install dependencies
+              run: |
+                  pip3 install types-psutil flake8
+                  pip3 install -r backend/requirements.txt
+                  pip3 install -r bot/requirements.txt
+
+            - name: Flake8
+              run: |
+                  flake8 --extend-ignore E501

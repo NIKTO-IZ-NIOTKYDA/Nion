@@ -51,7 +51,7 @@ async def GenLesson(user_id: int, lesson_id: str, url: str | None) -> InlineKeyb
     else:
         buttons.append([InlineKeyboardButton(text='⚠️ Неверные данные ⚠️', callback_data=f'lesson:nftadmins:{lesson_id}')])
 
-    if url != None:
+    if url is not None:
         buttons.append([InlineKeyboardButton(text='ГДЗ', url=url)])
 
     buttons.append([GenButtonBack('lessons')])

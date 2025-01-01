@@ -1,28 +1,8 @@
 {
     "python.analysis.autoImportCompletions": true,
     "discord.enable": true,
-    "cSpell.words": [
-        "aiofiles",
-        "asyncpg",
-        "autoflush",
-        "cerror",
-        "loging",
-        "netschool",
-        "netschoolapi",
-        "nftadmins",
-        "niktoizneotkyda",
-        "NSAPI",
-        "OBZR",
-        "onupdate",
-        "sessionmaker",
-        "sqlalchemy",
-        "uvicorn",
-        "UVTP",
-        "МБОУ",
-        "ОБЗР"
-    ],
+    "cSpell.words": [],
     "workbench.editor.autoLockGroups": {
         "jsProfileVisualizer.cpuprofile.table": true
-    },
-    "python.languageServer": "Pylance"
+    }
 }
