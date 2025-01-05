@@ -45,16 +45,15 @@ async def GetAdmins(body: Core):
     }
 
     for user in users:
-        for role in user.roles:
-            if role.permissions['permissions']['admin']:
-                admins['admins'].append({
-                    'user_id': user.user_id,
-                    'username': user.username,
-                    'first_name': user.first_name,
-                    'last_name': user.last_name,
-                    'send_notifications': user.send_notifications
-                })
-                break
+        if (await utils.GetPermissions(user.user_id)).admin:
+            admins['admins'].append({
+                'user_id': user.user_id,
+                'username': user.username,
+                'first_name': user.first_name,
+                'last_name': user.last_name,
+                'send_notifications': user.send_notifications
+            })
+            break
 
     return JSONResponse(status_code=status.HTTP_200_OK, content=admins)
 
