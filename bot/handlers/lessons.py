@@ -1,7 +1,7 @@
 from aiogram import F
 from aiogram.fsm.context import FSMContext
 from aiogram.types import BufferedInputFile
-from aiogram.exceptions import TelegramBadRequest
+from aiogram.exceptions import TelegramForbiddenError
 from aiogram.types import Message, CallbackQuery, InlineKeyboardMarkup
 
 import utils
@@ -73,7 +73,7 @@ async def lesson_nftadmins_comment(callback: CallbackQuery, state: FSMContext):
                                             [GenButtonBack('lesson:show:' + calldata)],
                                             [__BACK_IN_MAIN_MENU__]
                                              ]))
-    except TelegramBadRequest:
+    except TelegramForbiddenError:
         await callback.message.answer('⚠️ Введите комментарий в нём можно указать на ошибку или предложить варианты исправления ошибки',
                                       reply_markup=InlineKeyboardMarkup(inline_keyboard=[
                                             [GenButtonBack('lesson:show:' + calldata)],
@@ -138,7 +138,7 @@ async def lesson_delete_warn(callback: CallbackQuery):
     try:
         await callback.message.edit_text(f'⚠️ Вы уверены ?\n\nДомашнее задание: {StatusHomework}\nФото: {StatusPhoto}\nURL: {StatusURL}',
                                          reply_markup=await GenDeleteLesson(lesson_id))
-    except TelegramBadRequest:
+    except TelegramForbiddenError:
         await callback.message.answer(f'⚠️ Вы уверены ?\n\nДомашнее задание: {StatusHomework}\nФото: {StatusPhoto}\nURL: {StatusURL}',
                                       reply_markup=await GenDeleteLesson(lesson_id))
 
