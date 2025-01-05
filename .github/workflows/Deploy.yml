@@ -1,0 +1,37 @@
+name: Build
+
+on:
+  workflow_run:
+    workflows: [Build]
+    types: [completed]
+    branches: master
+  workflow_dispatch:
+
+jobs:
+  deploy:
+    name: "Deploy"
+    if: ${{ github.event.workflow_run.conclusion == 'success' }}
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: "Updating containers on the server"
+        uses: appleboy/ssh-action@master
+        with:
+            host: ${{ secrets.SERVER_HOST }}
+            port: ${{ secrets.SERVER_PORT }}
+            username: ${{ secrets.SERVER_USERNAME }}
+            key: ${{ secrets.SERVER_KEY }}
+            passphrase: ${{ secrets.SERVER_PASSPHRASE }}
+            script: |
+              cd ${{ secrets.SERVER_WORKDIR }}
+
+              docker compose -f docker-compose.prod.yml stop
+              docker system prune -a -f
+
+              git pull origin master -f
+
+              docker compose -f docker-compose.prod.yml up --build --detach
+
+              docker ps -a
+
+              exit 0
