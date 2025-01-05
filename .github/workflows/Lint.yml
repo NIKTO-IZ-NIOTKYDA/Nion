@@ -7,30 +7,30 @@ on:
   push:
 
 jobs:
-    Lint:
-        runs-on: ubuntu-latest
-        strategy:
-            matrix:
-                python-version: [ 3.13.1 ]
-        steps:
-            - name: "Checkout repository"
-              uses: actions/checkout@v4.2.2
+  Lint:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        python-version: [ 3.13.1 ]
+    steps:
+      - name: "Checkout repository"
+        uses: actions/checkout@v4.2.2
 
-            - name: "Setup Python ${{ matrix.python-version }}"
-              uses: actions/setup-python@v5.3.0
-              with:
-                python-version: ${{ matrix.python-version }}
+      - name: "Setup Python ${{ matrix.python-version }}"
+        uses: actions/setup-python@v5.3.0
+        with:
+            python-version: ${{ matrix.python-version }}
 
-            - name: "Upgrade pip"
-              run: |
-                  python3 -m pip install --upgrade pip
+      - name: "Upgrade pip"
+        run: |
+          python3 -m pip install --upgrade pip
 
-            - name: "Install dependencies"
-              run: |
-                  pip3 install types-psutil flake8
-                  pip3 install -r backend/requirements.txt
-                  pip3 install -r bot/requirements.txt
+      - name: "Install dependencies"
+        run: |
+          pip3 install types-psutil flake8
+          pip3 install -r backend/requirements.txt
+          pip3 install -r bot/requirements.txt
 
-            - name: "Flake8"
-              run: |
-                  flake8 --extend-ignore E501
+      - name: "Flake8"
+        run: |
+          flake8 --extend-ignore E501

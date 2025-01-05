@@ -1,6 +1,10 @@
 services:
   nginx:
     image: nginx:stable-alpine
+    container_name: ${NGINX_CONTAINER_NAME}
+    env_file:
+      - .env
+
     ports:
       - "5555:80"
       - "5556:443"
@@ -34,6 +38,7 @@ services:
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
       POSTGRES_DB: ${POSTGRES_DB}
       PGDATA: /var/lib/postgresql/data/pgdata/${POSTGRES_DB}
+      DATABASE_CONTAINER_NAME: ${DATABASE_CONTAINER_NAME}
     
     volumes:
       - /etc/localtime:/etc/localtime:ro

@@ -1,0 +1,107 @@
+services:
+  nginx:
+    image: nginx:stable-alpine
+    container_name: ${NGINX_CONTAINER_NAME}
+    ports:
+      - "${TEST_PORT_HTTP}:80"
+      - "${TEST_PORT_HTTPS}:443"
+    depends_on:
+      - backend
+    volumes:
+      - ./nginx.conf:/etc/nginx/nginx.conf
+    networks:
+      - nion
+
+  database:
+    image: postgres:17.2-alpine3.20
+    container_name: ${DATABASE_CONTAINER_NAME}
+
+    command: >
+      postgres -c max_connections=1000
+               -c shared_buffers=256MB
+               -c effective_cache_size=768MB
+               -c maintenance_work_mem=64MB
+               -c checkpoint_completion_target=0.7
+               -c wal_buffers=16MB
+               -c default_statistics_target=100
+               -p ${POSTGRES_PORT}
+    restart: unless-stopped
+
+    ports:
+      - ${POSTGRES_PORT}:${POSTGRES_PORT}
+
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_DB: ${POSTGRES_DB}
+      PGDATA: /var/lib/postgresql/data/pgdata/${POSTGRES_DB}
+    
+    volumes:
+      - /etc/localtime:/etc/localtime:ro
+      - DB:/var/lib/postgresql/data/pgdata/
+
+    deploy:
+      resources:
+        limits:
+          cpus: '0.50'
+          memory: 512M
+        reservations:
+          cpus: '0.25'
+          memory: 256M
+
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER} -d ${POSTGRES_DB}"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+
+    networks:
+      - nion
+
+  backend:
+    container_name: ${BACKEND_CONTAINER_NAME}
+    env_file:
+      - .env
+    image: ghcr.io/nikto-iz-niotkyda/backend:latest
+    depends_on:
+      - database
+    deploy:
+      resources:
+        limits:
+          cpus: '0.50'
+          memory: 512M
+    volumes:
+      - /etc/localtime:/etc/localtime:ro
+      - ./other:/src/other
+    restart: always
+    expose:
+      - ${BACKEND_PORT}:${BACKEND_PORT}
+    networks:
+      - nion
+
+  bot:
+    container_name: ${BOT_CONTAINER_NAME}
+    env_file:
+      - .env
+    image: ghcr.io/nikto-iz-niotkyda/bot:latest
+    depends_on:
+      - database
+      - backend
+    deploy:
+      resources:
+        limits:
+          cpus: '0.35'
+          memory: 512M
+    volumes:
+      - /etc/localtime:/etc/localtime:ro
+      - ./other:/src/other
+    restart: always
+    networks:
+      - nion
+
+networks:
+  nion:
+
+volumes:
+  DB:
+    name: ${VOLUME_DATABASE}

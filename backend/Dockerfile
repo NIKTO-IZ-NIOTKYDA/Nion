@@ -7,4 +7,4 @@ RUN pip install --no-cache-dir --upgrade -r ./requirements.txt
 
 COPY ./app .
 
-CMD ["fastapi", "run", "main.py"]
+CMD [ "fastapi", "run", "main.py" ]
