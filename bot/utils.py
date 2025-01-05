@@ -84,7 +84,7 @@ async def CheckAuthUser(message: Message, bot: aiogram.Bot) -> bool:
 
     try:
         await rq_users.GetUser(message.chat.id)
-    except rq_users.errors.ResponseError:
+    except rq_users.httpx.HTTPStatusError:
         log.info(str(message.chat.id), 'User unauthenticated !')
 
         await rq_users.SetUser(
