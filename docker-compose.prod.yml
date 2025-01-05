@@ -44,6 +44,7 @@ services:
 
     networks:
       - nion
+    tty: true
 
   backend:
     container_name: ${BACKEND_CONTAINER_NAME}
@@ -65,6 +66,7 @@ services:
       - ${BACKEND_PORT}:${BACKEND_PORT}
     networks:
       - nion
+    tty: true
 
   bot:
     container_name: ${BOT_CONTAINER_NAME}
@@ -85,6 +87,7 @@ services:
     restart: always
     networks:
       - nion
+    tty: true
 
 networks:
   nion:
