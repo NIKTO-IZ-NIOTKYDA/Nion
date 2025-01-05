@@ -91,7 +91,7 @@ async def SetUser(body: EditUserBody):
     for role_id in body.role_ids:
         role = await rq.GetRole(body.UserID, role_id)
 
-        if role == rq.Role:
+        if isinstance(role, rq.Role):
             roles.append(role)
         elif role == AttributeError:
             return JSONResponse(status_code=status.HTTP_404_NOT_FOUND, content={
