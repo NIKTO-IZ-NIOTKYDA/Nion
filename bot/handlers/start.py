@@ -1,8 +1,8 @@
 from aiogram.types import Message
 from aiogram.filters import Command
 
-from utils import CheckAuthUser
 from other.config import config
+import requests.users as rq_users
 from requests.users import SetUser
 from handlers.core import GetRouter
 from keyboards.users import GenStart
@@ -13,7 +13,9 @@ router = GetRouter()
 
 @router.message(Command('start'))
 async def start(message: Message) -> None:
-    if not await CheckAuthUser(message, message.bot):
+    try:
+        await rq_users.GetUser(message.chat.id)
+    except rq_users.httpx.HTTPStatusError:
         await SetUser(
                 message.from_user.id,
                 message.from_user.username,
