@@ -3,7 +3,7 @@ from platform import system, python_version, release
 import psutil
 from aiogram import F
 from aiogram.fsm.context import FSMContext
-from aiogram.exceptions import TelegramForbiddenError
+from aiogram.exceptions import TelegramForbiddenError, TelegramBadRequest
 from aiogram.types import CallbackQuery, Message, InlineKeyboardMarkup, InlineKeyboardButton
 
 import utils
@@ -398,7 +398,7 @@ async def admin_panel_role_edit_users_delete(callback: CallbackQuery, state: FSM
             f'⚠️ С вас снята роль \'{role['name']}\'',
             reply_markup=InlineKeyboardMarkup(inline_keyboard=[[__BACK_IN_MAIN_MENU__]])
         )
-    except TelegramForbiddenError:
+    except (TelegramForbiddenError, TelegramBadRequest):
         log.warn(str(user_delete_id), f'User {user_delete_id} has blocked the bot!')
 
     role = await rq_roles.GetRole(callback.message.chat.id, role_id)
@@ -508,7 +508,7 @@ async def admin_panel_role_edit_users_input_user_id_or_username(message: Message
             f'⚠️ Вам добавлена роль \'{role['name']}\'',
             reply_markup=InlineKeyboardMarkup(inline_keyboard=[[__BACK_IN_MAIN_MENU__]])
         )
-    except TelegramForbiddenError:
+    except (TelegramForbiddenError, TelegramBadRequest):
         await message.answer(
             f'❌ Пользователь {message.text} заблокировал бота!',
             reply_markup=InlineKeyboardMarkup(inline_keyboard=[

@@ -4,7 +4,7 @@ from time import sleep
 
 import aiogram
 import aiogram.utils
-from aiogram.exceptions import TelegramForbiddenError
+from aiogram.exceptions import TelegramForbiddenError, TelegramBadRequest
 from aiogram.types import InlineKeyboardMarkup, Message, CallbackQuery
 
 from other.config import config
@@ -61,7 +61,7 @@ async def newsletter(user_id: int, text: str, auto: bool, bot: aiogram.Bot) -> N
                                        reply_markup=InlineKeyboardMarkup(inline_keyboard=[[__BACK_IN_MAIN_MENU__]]))
                 log.info(str(user['user_id']), f'Sent: {user['user_id']}')
 
-        except TelegramForbiddenError:
+        except (TelegramForbiddenError, TelegramBadRequest):
             log.warn(str(user['user_id']), f'User {user['user_id']} has blocked the bot!')
 
         timer += 1
@@ -111,7 +111,7 @@ async def NotificationAdmins(text: str, bot: aiogram.Bot, reply_markup: aiogram.
         try:
             await bot.send_message(chat_id=admin['user_id'], text=text, reply_markup=reply_markup)
             log.info(None, f'Send {admin['user_id']}')
-        except TelegramForbiddenError:
+        except (TelegramForbiddenError, TelegramBadRequest):
             log.warn(str(admin['user_id']), f'Admin {admin['user_id']} blocked or didn\'t start the bot!')
 
 
