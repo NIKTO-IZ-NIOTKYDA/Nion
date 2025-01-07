@@ -1,7 +1,7 @@
 from aiogram import F
 from aiogram.types import CallbackQuery
 from aiogram.fsm.context import FSMContext
-from aiogram.exceptions import TelegramForbiddenError
+from aiogram.exceptions import TelegramForbiddenError, TelegramBadRequest
 
 from other.config import config
 from utils import CheckAuthUser
@@ -32,5 +32,5 @@ async def menu(callback: CallbackQuery, state: FSMContext):
                 [role['role_id'] for role in user['roles']]
             )
 
-        except TelegramForbiddenError:
+        except (TelegramForbiddenError, TelegramBadRequest):
             await start(callback.message)
