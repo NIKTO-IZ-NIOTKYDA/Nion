@@ -56,13 +56,23 @@ async def newsletter(user_id: int, text: str, auto: bool, bot: aiogram.Bot) -> N
             sleep(1.15)
 
         try:
-            if (user['send_notifications'] and auto) or not auto:
+            print(user['blocked_bot'])
+            if ((user['send_notifications'] and auto) or not auto) and not user['blocked_bot']:
                 await bot.send_message(chat_id=user['user_id'], text=text,
                                        reply_markup=InlineKeyboardMarkup(inline_keyboard=[[__BACK_IN_MAIN_MENU__]]))
                 log.info(str(user['user_id']), f'Sent: {user['user_id']}')
 
         except (TelegramForbiddenError, TelegramBadRequest):
             log.warn(str(user['user_id']), f'User {user['user_id']} has blocked the bot!')
+            await rq_users.SetUser(
+                user['user_id'],
+                user['username'],
+                user['first_name'],
+                user['last_name'],
+                user['send_notifications'],
+                True,
+                user['role_ids']
+            )
 
         timer += 1
 

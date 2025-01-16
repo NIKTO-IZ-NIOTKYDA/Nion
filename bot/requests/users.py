@@ -86,6 +86,7 @@ async def SetUser(
             first_name: str | None,
             last_name: str | None,
             send_notifications: bool,
+            blocked_bot: bool,
             role_ids: list[int],
             requests_timeout: int = None
         ) -> None | errors.ResponseError | httpx.HTTPStatusError:
@@ -100,6 +101,7 @@ async def SetUser(
                 'first_name': first_name,
                 'last_name': last_name,
                 'send_notifications': send_notifications,
+                'blocked_bot': blocked_bot,
                 'role_ids': role_ids
             }).data
         ))
@@ -120,6 +122,7 @@ async def UpdateUser(
             first_name: str | None,
             last_name: str | None,
             send_notifications: bool,
+            blocked_bot: bool,
             role_ids: list[int],
             requests_timeout: int = None
         ) -> None | errors.ResponseError | httpx.HTTPStatusError:
@@ -134,6 +137,7 @@ async def UpdateUser(
                 'first_name': first_name,
                 'last_name': last_name,
                 'send_notifications': send_notifications,
+                'blocked_bot': blocked_bot,
                 'role_ids': role_ids
             }).data
         ))

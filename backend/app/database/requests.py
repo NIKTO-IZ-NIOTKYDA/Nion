@@ -68,7 +68,7 @@ async def SyncRoles():
                 log.warn(None, f'Getting \'{config.TG_ID_OWNER}\' is not complied')
 
                 log.info(None, f'Adding user \'{config.TG_ID_OWNER}\'')
-                await SetUser(config.TG_ID_OWNER, config.TG_USERNAME_OWNER, config.TG_FIRST_NAME_OWNER, config.TG_LAST_NAME_OWNER, [])
+                await SetUser(config.TG_ID_OWNER, config.TG_USERNAME_OWNER, config.TG_FIRST_NAME_OWNER, config.TG_LAST_NAME_OWNER, False, [])
             else:
                 log.debug(None, f'Getting \'{config.TG_ID_OWNER}\' is complied')
 
@@ -106,7 +106,7 @@ async def SyncRoles():
 # SETTING
 
 
-async def SetUser(user_id: int, username: str, first_name: str, last_name: str, roles: list[Role] = []) -> None | IntegrityError | Exception:
+async def SetUser(user_id: int, username: str, first_name: str, last_name: str, blocked_bot: bool = False, roles: list[Role] = []) -> None | IntegrityError | Exception:
     log.info(user_id, 'Setting User')
 
     async with async_session() as session:
@@ -117,6 +117,7 @@ async def SetUser(user_id: int, username: str, first_name: str, last_name: str, 
                 first_name=first_name,
                 last_name=last_name,
                 send_notifications=True,
+                blocked_bot=blocked_bot,
                 roles=roles
             ))
 
@@ -325,7 +326,7 @@ async def UpdateLesson(user_id: int,
             return Error
 
 
-async def UpdateUser(user_id: int, username: str, first_name: str, last_name: str, send_notifications: bool, role_ids: list[int]) -> None | IndexError | IntegrityError | Exception:
+async def UpdateUser(user_id: int, username: str, first_name: str, last_name: str, send_notifications: bool, blocked_bot: bool = False, role_ids: list[int] = [config.ID_ROLE_DEFAULT]) -> None | IndexError | IntegrityError | Exception:
     log.info(user_id, 'Updating User')
 
     async with async_session() as session:
@@ -340,6 +341,7 @@ async def UpdateUser(user_id: int, username: str, first_name: str, last_name: st
             user.first_name = first_name
             user.last_name = last_name
             user.send_notifications = send_notifications
+            user.blocked_bot = blocked_bot
             user.roles = (await session.scalars(select(Role).filter(Role.role_id.in_(role_ids)))).unique().all()
 
             await __SaveData(user_id, session)
