@@ -84,6 +84,17 @@ async def newsletter(user_id: int, text: str, auto: bool, bot: aiogram.Bot) -> N
                 [role['role_id'] for role in user['roles']]
             )
 
+            user = await rq_users.GetUser(user['user_id'])
+            await rq_users.SetUser(
+                user['user_id'],
+                user['username'],
+                user['first_name'],
+                user['last_name'],
+                user['send_notifications'],
+                True,
+                [role['role_id'] for role in user['roles']]
+            )
+
         timer += 1
 
     log.info(user_id, 'Mailing is over')
