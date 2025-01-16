@@ -56,7 +56,6 @@ async def newsletter(user_id: int, text: str, auto: bool, bot: aiogram.Bot) -> N
             sleep(1.15)
 
         try:
-            print(user['blocked_bot'])
             if ((user['send_notifications'] and auto) or not auto) and not user['blocked_bot']:
                 await bot.send_message(chat_id=user['user_id'], text=text,
                                        reply_markup=InlineKeyboardMarkup(inline_keyboard=[[__BACK_IN_MAIN_MENU__]]))
