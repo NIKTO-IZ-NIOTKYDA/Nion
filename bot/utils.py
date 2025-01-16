@@ -63,7 +63,6 @@ async def newsletter(user_id: int, text: str, auto: bool, bot: aiogram.Bot) -> N
 
         except (TelegramForbiddenError, TelegramBadRequest):
             log.warn(str(user['user_id']), f'User {user['user_id']} has blocked the bot!')
-
             user = await rq_users.GetUser(user['user_id'])
             await rq_users.SetUser(
                 user['user_id'],
