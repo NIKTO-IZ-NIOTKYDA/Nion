@@ -30,6 +30,7 @@ async def GetUser(body: Core):
         'first_name': user.first_name,
         'last_name': user.last_name,
         'send_notifications': user.send_notifications,
+        'blocked_bot': user.blocked_bot,
         'roles': roles
     })
 
@@ -72,6 +73,7 @@ async def GetUsers(body: Core):
             'username': user.username,
             'first_name': user.first_name,
             'last_name': user.last_name,
+            'blocked_bot': user.blocked_bot,
             'send_notifications': user.send_notifications
         })
 
@@ -103,6 +105,7 @@ async def SetUser(body: EditUserBody):
         body.username,
         body.first_name,
         body.last_name,
+        body.blocked_bot,
         roles
     )
 
@@ -130,6 +133,7 @@ async def UpdateUser(body: EditUserBody):
         body.first_name,
         body.last_name,
         body.send_notifications,
+        body.blocked_bot,
         body.role_ids
     )
 

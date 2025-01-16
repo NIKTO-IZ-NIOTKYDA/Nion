@@ -29,6 +29,7 @@ async def menu(callback: CallbackQuery, state: FSMContext):
                 callback.message.chat.first_name,
                 callback.message.chat.last_name,
                 user['send_notifications'],
+                False,
                 [role['role_id'] for role in user['roles']]
             )
 

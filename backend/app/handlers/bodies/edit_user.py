@@ -6,4 +6,5 @@ class Body(Core):
     first_name: str | None
     last_name: str | None
     send_notifications: bool
+    blocked_bot: bool
     role_ids: list[int]

@@ -52,6 +52,7 @@ class User(Base):
     first_name: Mapped[str | None] = mapped_column(String(1024), nullable=True)
     last_name: Mapped[str | None] = mapped_column(String(1024), nullable=True)
     send_notifications: Mapped[bool] = mapped_column(Boolean(create_constraint=True))
+    blocked_bot: Mapped[bool] = mapped_column(Boolean(create_constraint=False))
     roles: Mapped[list['Role']] = relationship(
         'Role',
         secondary=user_role,

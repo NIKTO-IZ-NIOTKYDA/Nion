@@ -6,7 +6,7 @@ class Lessons:
     log: logging.logging = None
 
     number_lessons: int = 0
-    lessons = [
+    lessons = sorted([
         ['algebra', 'Алгебра'],
         ['english_lang_1', 'Англ. Яз. (1 группа)'],
         ['english_lang_2', 'Англ. Яз. (2 группа)'],
@@ -17,16 +17,15 @@ class Lessons:
         ['computer_science_2', 'Информатика (2 группа)'],
         ['story', 'История'],
         ['literature', 'Литература'],
-        # ['music', 'Музыка'],
         ['OBZR', 'ОБЗР'],
         ['social_science', 'Обществознание'],
-        # ['native_literature', 'Родная литература'],
         ['russian_lang', 'Русский язык'],
-        # ['TBIS', 'Теория вероятностей и статистика'],
         ['technology', 'Технология'],
         ['physics', 'Физика'],
-        ['chemistry', 'Химия']
-    ]
+        ['chemistry', 'Химия'],
+        ['russian_lang_addon', 'Русский язык (Доп)'],
+        ['literature_addon', 'Литература (Доп)']
+    ], key=lambda x: x[1])
 
     def __init__(self) -> None:
         self.log = logging.logging(Name='LESSONS', Color=colors.blue)

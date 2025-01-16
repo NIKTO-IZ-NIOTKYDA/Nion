@@ -22,6 +22,7 @@ async def start(message: Message) -> None:
                 message.from_user.first_name,
                 message.from_user.last_name,
                 True,
+                False,
                 [config.ID_ROLE_DEFAULT]
             )
 
