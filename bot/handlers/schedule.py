@@ -8,10 +8,10 @@ from aiogram.types.input_file import BufferedInputFile
 
 import utils
 import requests.schedule as rq_schedule
-from keyboards.users import GenSchedule
 from handlers.core import log, GetRouter
 from keyboards.other import __BACK_IN_MAIN_MENU__
 from handlers.states.update_lesson import FormUpdate
+from keyboards.users import GenSchedule, __SCHEDULE_RECESS__
 from keyboards.admins import __DELETE_SCHEDULE__, __UPDATE_HOMEWORK_AND_PHOTO__
 
 router = GetRouter()
@@ -124,19 +124,19 @@ async def schedule_recess(callback: CallbackQuery):
 
     status, time_to_end = await utils.GetTimeToLesson(lessons['schedule_call'], current_time)
 
-    if status == -1:
-        await callback.message.edit_text(f'{text}\n\nБольше уроков на сегодня нет.',
-                                         reply_markup=InlineKeyboardMarkup(inline_keyboard=[[__BACK_IN_MAIN_MENU__]]))
-    else:
-        if status == 0:
-            status_text = 'урока'
-        elif status == 1:
-            status_text = 'перемены'
+    try:
+        if status == -1:
+            await callback.message.edit_text(f'{text}\n\nБольше уроков на сегодня нет.', reply_markup=__SCHEDULE_RECESS__)
         else:
-            status_text = 'ERROR'
+            if status == 0:
+                status_text = 'урока'
+            elif status == 1:
+                status_text = 'перемены'
+            else:
+                status_text = 'ERROR'
 
-        await callback.message.edit_text(f'{text}\n\nДо конца {status_text} осталось {time_to_end:.0f} минут',
-                                         reply_markup=InlineKeyboardMarkup(inline_keyboard=[[__BACK_IN_MAIN_MENU__]]))
+            await callback.message.edit_text(f'{text}\n\nДо конца {status_text} осталось {time_to_end:.0f} минут', reply_markup=__SCHEDULE_RECESS__)
+    except utils.TelegramBadRequest: return
 
 
 @router.callback_query(F.data.startswith('schedule:nftadmins'))

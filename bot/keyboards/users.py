@@ -13,11 +13,17 @@ __HOMEWORK__: InlineKeyboardMarkup = GenLesson(appstart_callback_data='lesson:sh
 __HOMEWORK__.inline_keyboard.append([__BACK_IN_MAIN_MENU__])
 log.init('__HOMEWORK__' + ': OK')
 
-__OFF__NOTIFICATIONS__ = InlineKeyboardMarkup(row_width=1, inline_keyboard=[
+__OFF_NOTIFICATIONS__ = InlineKeyboardMarkup(row_width=1, inline_keyboard=[
     [InlineKeyboardButton(text='Да, я хочу отключить уведомления', callback_data='profile:notifications:off')],
     [InlineKeyboardButton(text='Нет, я хочу оставить уведомления', callback_data='profile')]
 ])
-log.init('__OFF__NOTIFICATIONS__' + ': OK')
+log.init('__OFF_NOTIFICATIONS__' + ': OK')
+
+__SCHEDULE_RECESS__ = InlineKeyboardMarkup(row_width=1, inline_keyboard=[
+    [InlineKeyboardButton(text='🔄 Обновить', callback_data='schedule:recess')],
+    [__BACK_IN_MAIN_MENU__]
+])
+log.init('__SCHEDULE_RECESS__' + ': OK')
 
 
 async def GenStart(user_id: int) -> InlineKeyboardMarkup:
