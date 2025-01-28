@@ -5,7 +5,7 @@ import utils
 import requests.users as rq_users
 from handlers.core import GetRouter
 from keyboards.other import GenButtonBack, __BACK_IN_MAIN_MENU__
-from keyboards.users import GenProfile, __OFF__NOTIFICATIONS__
+from keyboards.users import GenProfile, __OFF_NOTIFICATIONS__
 
 
 router = GetRouter()
@@ -39,7 +39,7 @@ async def profile(callback: CallbackQuery):
 async def profile_notifications_off_warn(callback: CallbackQuery):
     await utils.CheckAuthUser(callback.message, callback.message.bot)
 
-    await callback.message.edit_text('Вы уверены ?\n\n*Если вы отключите уведомления вы не будете получать сообщения об обновлении домашнего задания и расписания. Сюда НЕ входит рассылка от администраторов бота.', reply_markup=__OFF__NOTIFICATIONS__)
+    await callback.message.edit_text('Вы уверены ?\n\n*Если вы отключите уведомления вы не будете получать сообщения об обновлении домашнего задания и расписания. Сюда НЕ входит рассылка от администраторов бота.', reply_markup=__OFF_NOTIFICATIONS__)
 
 
 @router.callback_query(F.data == 'profile:notifications:off')
