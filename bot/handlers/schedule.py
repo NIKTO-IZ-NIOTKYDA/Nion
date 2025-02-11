@@ -137,7 +137,7 @@ async def schedule_recess(callback: CallbackQuery):
 
             await callback.message.edit_text(f'{text}\n\nДо конца {status_text} осталось {time_to_end:.0f} минут', reply_markup=__SCHEDULE_RECESS__)
     except utils.TelegramBadRequest:
-        return
+        await callback.answer("🔄 Обновлено")
 
 
 @router.callback_query(F.data.startswith('schedule:nftadmins'))
