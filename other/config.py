@@ -94,7 +94,6 @@ class CONFIG(BaseSettings):
 
     model_config = SettingsConfigDict()
 
-
     def GetRelease(self) -> str:
         return str(f'Release {self.VERSION_MAJOR}.{self.VERSION_MINOR}.{self.VERSION_PATCH} [{self.VERSION_TYPE}]')
 
